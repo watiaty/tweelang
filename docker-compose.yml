@@ -1,0 +1,34 @@
+services:
+  app:
+    image: 'learn-language:latest'
+    build:
+      context: learn-language
+      dockerfile: Dockerfile
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db:5432/learn-language
+      - DATABASE_USERNAME=waitaty
+      - DATABASE_PASSWORD=ijb^A9ooQFK9DTXA6z^p
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=production
+    ports:
+      - "8080:8080"
+
+  db:
+    image: 'postgres:alpine3.19'
+    container_name: db
+    environment:
+      - POSTGRES_DB=learn-language
+      - POSTGRES_USER=waitaty
+      - POSTGRES_PASSWORD=ijb^A9ooQFK9DTXA6z^p
+    ports:
+      - "5431:5432"
+
+  angular-app:
+    build:
+      context: frontend-angular
+      dockerfile: Dockerfile
+    ports:
+      - "8081:4200"
