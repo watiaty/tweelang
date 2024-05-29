@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_date_column_to_user_word
+      author: Yauheni Haikou
+      changes:
+        - addColumn:
+            tableName: user_word
+            columns:
+              - column:
+                  name: date
+                  type: TIMESTAMP

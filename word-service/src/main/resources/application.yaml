@@ -1,0 +1,29 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.security: TRACE
+    org.springframework.web: INFO
+    org.springframework.security.oauth2: TRACE
+
+spring:
+  application:
+    name: word-service
+  config:
+    import: "configserver:http://localhost:8088"
+  datasource:
+    url: jdbc:postgresql://localhost:5432/words
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:9000

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: Yauheni Haikou
+
+      changes:
+        - createSequence:
+            sequenceName: token_id_seq
+            startValue: 1
+            incrementBy: 1

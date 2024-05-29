@@ -1,0 +1,33 @@
+<div class="card my-5">
+  <div class="card-body d-flex justify-content-center">
+    <button mat-stroked-button (click)="addWordsFromCsv()">Add all from file</button>
+    <div>
+      @if (progress) {
+      <mat-toolbar class="progress-bar">
+        <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
+        <span class="progress">{{ progress }}%</span>
+  </mat-toolbar>
+      }
+
+      <mat-form-field>
+        <div>
+          <mat-toolbar>
+            <input matInput [value]="fileName"/>
+
+          </mat-toolbar>
+
+          <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput"/>
+        </div>
+      </mat-form-field>
+      <button mat-flat-button color="primary" [disabled]="!currentFile" (click)="upload()">
+        Upload
+      </button>
+    </div>
+
+    @if (message) {
+    <div class="message">
+    {{ message }}
+    </div>
+    }
+  </div>
+</div>

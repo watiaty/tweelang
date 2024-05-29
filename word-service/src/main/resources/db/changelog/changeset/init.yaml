@@ -1,0 +1,137 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Yauheni Haikou
+      changes:
+        - createTable:
+            tableName: word
+            columns:
+              - column:
+                  name: word_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: word
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: language
+                  type: VARCHAR(2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: definition
+                  type: VARCHAR(255)
+        - createTable:
+            tableName: translation
+            columns:
+              - column:
+                  name: translation_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_translations_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+              - column:
+                  name: translated_word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_translations_translated_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+        - createTable:
+            tableName: word_form
+            columns:
+              - column:
+                  name: word_form_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: main_word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_word_forms_main_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+              - column:
+                  name: derived_word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_word_forms_derived_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+              - column:
+                  name: relationship_type
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: synonym
+            columns:
+              - column:
+                  name: synonym_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_synonyms_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+              - column:
+                  name: synonym_word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_synonyms_synonym_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+        - createTable:
+            tableName: antonym
+            columns:
+              - column:
+                  name: antonym_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_antonyms_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id
+              - column:
+                  name: antonym_word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_antonyms_antonym_word
+                    referencedTableName: word
+                    referencedColumnNames: word_id

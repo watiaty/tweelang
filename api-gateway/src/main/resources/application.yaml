@@ -1,0 +1,77 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.security: TRACE
+    org.springframework.web: INFO
+    org.springframework.security.oauth2: TRACE
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "configserver:http://localhost:8088"
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay=
+      routes:
+        - id: main-service-words
+          uri: lb://main-service
+          predicates:
+            - Path=/api/v1/words/**
+        - id: main-service-swagger
+          uri: lb://main-service
+          predicates:
+            - Path=/main-service/v3/api-docs
+        - id: word-service
+          uri: lb://word-service
+          predicates:
+            - Path=/api/v1/word/**
+        - id: word-service-translation
+          uri: lb://word-service
+          predicates:
+            - Path=/api/v1/translation/**
+        - id: word-service-swagger
+          uri: lb://word-service
+          predicates:
+            - Path=/word-service/v3/api-docs
+        - id: angular
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/**
+        - id: angular
+          uri: http://localhost:8081/words/
+          predicates:
+            - Path=/words
+          filters:
+            - SetPath=/words
+  security:
+    oauth2:
+      client:
+        registration:
+          gateway:
+            client-id: "client"
+            client-secret: "secret"
+            provider: "spring"
+            authorization-grant-type: "authorization_code"
+            scope: "openid, profile"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            client-name: "gateway"
+        provider:
+          spring:
+            issuer-uri: "http://localhost:9000"
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+      - url: /word-service/v3/api-docs
+        name: Word Service
+      - url: /main-service/v3/api-docs
+        name: Main Service

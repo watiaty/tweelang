@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">LearningLang</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <ng-container *ngIf="isLoggedIn">
+          <button class="nav-link" aria-current="page" routerLink="words">Words</button>
+          <a class="nav-link" routerLink="train">Train</a>
+          <a class="nav-link" routerLink="admin">Admin</a>
+          <a class="nav-link" routerLink="rating">Rating</a>
+        </ng-container>
+      </div>
+    </div>
+    <ng-container *ngIf="!isLoggedIn">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
+        </li>
+        <li class="nav-item">
+          <button (click)="login()" class="nav-link">Sign in</button>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-container *ngIf="isLoggedIn">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a type="button" mat-menu-item class="nav-link" [matMenuTriggerFor]="profile">
+            <span>{{ user.username }}</span>
+            <mat-icon>menu</mat-icon>
+          </a>
+        </li>
+      </ul>
+      <mat-menu #profile="matMenu">
+        <button mat-menu-item routerLink="profile">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

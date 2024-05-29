@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-weight-to-word
+      author: Yauheni Haikou
+      changes:
+        - addColumn:
+            tableName: word
+            columns:
+              - column:
+                  name: weight
+                  type: INTEGER
+                  defaultValue: 0

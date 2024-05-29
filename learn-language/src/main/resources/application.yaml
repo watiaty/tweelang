@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: main-service
+  config:
+    activate:
+      on-profile: dev
+    import: "configserver:http://localhost:8088"
+  datasource:
+    url: jdbc:postgresql://localhost:5432/learn-language
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        generate-ddl: false
+        ddl-auto: false
+    hibernate:
+        ddl-auto: validate
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000
+      client:
+        registration:
+          messaging-client-token-exchange:
+            client-id: "client"
+            client-secret: "secret"
+            provider: "spring"
+            authorization-grant-type: client_credentials
+            client-name: messaging-client-client-credentials
+        provider:
+          spring:
+            issuer-uri: "http://localhost:9000"
+            
+  words:
+    base-uri: http://127.0.0.1:8082
+
+---
+
+spring:
+  application:
+    name: main-service
+  config:
+    activate:
+      on-profile: production
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        generate-ddl: false
+    show-sql: true
+
+---
+
+liquibase:
+  enabled: true

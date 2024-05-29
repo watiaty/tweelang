@@ -1,0 +1,25 @@
+<div class="card my-5">
+  <div class="card-body">
+    <div class="d-flex justify-content-center">
+      <form style="width: 70%">
+        <mat-form-field style="width: 80%">
+          <mat-label>Word</mat-label>
+          <input matInput placeholder="Введите слово" [formControl]="searchText" (input)="navigateToSearch()">
+          <mat-hint *ngIf="words.length > 0">{{ words.length }} results</mat-hint>
+        </mat-form-field>
+        <button type="button" mat-stroked-button class="mt-3" (click)="navigateToSearch()">Search</button>
+      </form>
+    </div>
+    <a [routerLink]="['/addword']">Add word</a>
+    <mat-list *ngFor="let word of words">
+      <mat-list-item>
+        <img src="assets/flags/{{word.language}}.jpg" alt="language" style="width: 20px">
+        <a [routerLink]="['/word', word.language, word.word]">{{ word.word }}</a>
+        <ng-container *ngFor="let translation of word.translations; let last = last">
+          {{ translation.translation }}{{ !last ? ', ' : '' }}
+        </ng-container>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+  </div>
+</div>

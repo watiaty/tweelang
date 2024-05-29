@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: crate-language-table
+      author: Yauheni Haikou
+      changes:
+        - createTable:
+            tableName: language
+            columns:
+              - column:
+                  name: id
+                  type: varchar(2)
+                  constraints:
+                    unique: true
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false

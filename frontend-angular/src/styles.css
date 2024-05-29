@@ -1,0 +1,27 @@
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #303030;
+}
+
+.card-body {
+  background: #303030;
+  color: white;
+}
+
+.mat-form-field {
+  height: 60px;
+}
+
+.card.my-5 {
+  border-color: #595959;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.custom-mat-form-field {
+  width: 400px;
+}

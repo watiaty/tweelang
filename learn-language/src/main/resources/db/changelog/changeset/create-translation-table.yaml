@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-word-translation-table
+      author: Yauheni Haikou
+      changes:
+        - createTable:
+            tableName: translation
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: lang
+                  type: varchar(60)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: translation
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: number_of_uses
+                  type: bigint
+                  defaultValueNumeric: "0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_approved
+                  type: boolean
+                  defaultValue: "false"
+              - column:
+                  name: is_private
+                  type: boolean
+                  defaultValue: "true"
+              - column:
+                  name: id_user
+                  type: bigint
+                  constraints:
+                    foreignKeyName: id_user_translation
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: id_word
+                  type: bigint
+                  constraints:
+                    foreignKeyName: id_word_translation
+                    referencedTableName: word
+                    referencedColumnNames: id

@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-repeat_stage-to-user_word
+      author: Yauheni Haikou
+      changes:
+        - addColumn:
+            tableName: user_word
+            columns:
+              - column:
+                  name: repeat_stage
+                  type: INTEGER
+                  defaultValue: 1

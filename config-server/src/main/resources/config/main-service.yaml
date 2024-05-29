@@ -1,0 +1,18 @@
+server:
+  port: 8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+openapi:
+  service:
+    title: main-service doc
+    version: 1.0.0
+    url: http://localhost:8080 #api gateway url
+springdoc:
+  api-docs:
+    path: /main-service/v3/api-docs
+  swagger-ui:
+    path: /main-service/swagger-ui.html

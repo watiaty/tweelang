@@ -1,0 +1,419 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-languages
+      author: Yauheni Haikou
+      changes:
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Arabic"
+              - column:
+                  name: abbreviation
+                  value: "AR"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Belarusian"
+              - column:
+                  name: abbreviation
+                  value: "BE"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Bulgarian"
+              - column:
+                  name: abbreviation
+                  value: "BG"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                    name: name
+                    value: "Czech"
+              - column:
+                  name: abbreviation
+                  value: "CS"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Welsh"
+              - column:
+                  name: abbreviation
+                  value: "CY"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Danish"
+              - column:
+                  name: abbreviation
+                  value: "DA"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "German"
+              - column:
+                  name: abbreviation
+                  value: "DE"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Greek"
+              - column:
+                  name: abbreviation
+                  value: "EL"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "English"
+              - column:
+                  name: abbreviation
+                  value: "EN"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Esperanto"
+              - column:
+                  name: abbreviation
+                  value: "EO"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Spanish"
+              - column:
+                  name: abbreviation
+                  value: "ES"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Estonian"
+              - column:
+                  name: abbreviation
+                  value: "ET"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Finnish"
+              - column:
+                  name: abbreviation
+                  value: "FI"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "French"
+              - column:
+                  name: abbreviation
+                  value: "FR"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Irish"
+              - column:
+                  name: abbreviation
+                  value: "GA"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Scottish Gaelic"
+              - column:
+                  name: abbreviation
+                  value: "GD"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Hungarian"
+              - column:
+                  name: abbreviation
+                  value: "HU"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Armenian"
+              - column:
+                  name: abbreviation
+                  value: "HY"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Indonesian"
+              - column:
+                  name: abbreviation
+                  value: "ID"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Icelandic"
+              - column:
+                  name: abbreviation
+                  value: "IS"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Italian"
+              - column:
+                  name: abbreviation
+                  value: "IT"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Japanese"
+              - column:
+                  name: abbreviation
+                  value: "JA"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Korean"
+              - column:
+                  name: abbreviation
+                  value: "KO"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Lithuanian"
+              - column:
+                  name: abbreviation
+                  value: "LT"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Latvian"
+              - column:
+                  name: abbreviation
+                  value: "LV"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Macedonian"
+              - column:
+                  name: abbreviation
+                  value: "MK"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Mongolian"
+              - column:
+                  name: abbreviation
+                  value: "MN"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Moldavian"
+              - column:
+                  name: abbreviation
+                  value: "MO"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Nepali"
+              - column:
+                  name: abbreviation
+                  value: "NE"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Dutch"
+              - column:
+                  name: abbreviation
+                  value: "NL"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Norwegian"
+              - column:
+                  name: abbreviation
+                  value: "NN"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Polish"
+              - column:
+                  name: abbreviation
+                  value: "PL"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Portuguese"
+              - column:
+                  name: abbreviation
+                  value: "PT"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Romanian"
+              - column:
+                  name: abbreviation
+                  value: "RO"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Russian"
+              - column:
+                  name: abbreviation
+                  value: "RU"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Slovak"
+              - column:
+                  name: abbreviation
+                  value: "SK"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Slovenian"
+              - column:
+                  name: abbreviation
+                  value: "SL"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Albanian"
+              - column:
+                  name: abbreviation
+                  value: "SQ"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Serbian"
+              - column:
+                  name: abbreviation
+                  value: "SR"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Swedish"
+              - column:
+                  name: abbreviation
+                  value: "SV"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Thai"
+              - column:
+                  name: abbreviation
+                  value: "TH"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Turkish"
+              - column:
+                  name: abbreviation
+                  value: "TR"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Ukrainian"
+              - column:
+                  name: abbreviation
+                  value: "UK"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Vietnamese"
+              - column:
+                  name: abbreviation
+                  value: "VI"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Yiddish"
+              - column:
+                  name: abbreviation
+                  value: "YI"
+        - insert:
+            tableName: language
+            columns:
+              - column:
+                  name: name
+                  value: "Chinese"
+              - column:
+                  name: abbreviation
+                  value: "ZH"

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-translation-table
+      author: Yauheni Haikou
+      changes:
+        - createTable:
+            tableName: user_translation
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: id_user_word
+                  type: bigint
+                  constraints:
+                    foreignKeyName: id_user_translation_user_word
+                    referencedTableName: user_word
+                    referencedColumnNames: id
+              - column:
+                  name: id_translation
+                  type: bigint

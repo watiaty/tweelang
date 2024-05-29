@@ -1,0 +1,16 @@
+<div class="card my-5">
+  <div class="card-body justify-content-center">
+    <table width="100%">
+    <ng-container *ngFor="let group of chunkWords(words, 100)">
+        <ng-container *ngFor="let row of chunkWords(group, 10)">
+          <tr>
+            <ng-container *ngFor="let word of row">
+              <td><a [routerLink]="['/word', language, word.word]">{{ word.word }}</a></td>
+            </ng-container>
+          </tr>
+        </ng-container>
+      ###
+    </ng-container>
+    </table>
+  </div>
+</div>

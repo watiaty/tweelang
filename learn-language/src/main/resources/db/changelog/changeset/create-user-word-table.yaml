@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-word-table
+      author: Yauheni Haikou
+      changes:
+        - createTable:
+            tableName: user_word
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: id_user
+                  type: bigint
+                  constraints:
+                    foreignKeyName: id_user_word_user
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: id_word
+                  type: bigint
+              - column:
+                  name: is_learning
+                  type: boolean
+                  defaultValue: "true"

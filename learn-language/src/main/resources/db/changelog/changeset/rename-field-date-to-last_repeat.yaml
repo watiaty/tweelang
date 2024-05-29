@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: rename-date-to-repeat_date-column
+      author: Yauheni Haikou
+      changes:
+        - renameColumn:
+            tableName: user_word
+            oldColumnName: date
+            newColumnName: repeat_date

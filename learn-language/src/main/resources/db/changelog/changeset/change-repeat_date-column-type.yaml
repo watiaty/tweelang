@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: modify-repeat_date-column-type
+      author: Yauheni Haikou
+      changes:
+        - modifyDataType:
+            tableName: user_word
+            columnName: repeat_date
+            newDataType: DATE

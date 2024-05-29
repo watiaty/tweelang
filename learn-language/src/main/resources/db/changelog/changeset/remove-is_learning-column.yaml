@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: remove-is_learning-column
+      author: Yauheni Haikou
+      changes:
+        - dropColumn:
+            tableName: user_word
+            columnName: is_learning
