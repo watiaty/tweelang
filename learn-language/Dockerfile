@@ -10,4 +10,4 @@ ENV ARTIFACT_NAME=learn-language-0.0.1-SNAPSHOT.jar
 WORKDIR /app
 COPY --from=BUILD /app/build/libs/$ARTIFACT_NAME .
 
-ENTRYPOINT exec java -jar ${ARTIFACT_NAME}
+ENTRYPOINT exec java -jar ${ARTIFACT_NAME} --spring.profiles.active=production

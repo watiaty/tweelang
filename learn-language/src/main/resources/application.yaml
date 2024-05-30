@@ -4,7 +4,7 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: "configserver:http://localhost:8088"
+    import: "config-server:http://localhost:8088"
   datasource:
     url: jdbc:postgresql://localhost:5432/learn-language
     username: postgres
@@ -20,7 +20,7 @@ spring:
     show-sql: true
   security:
     oauth2:
-      resourceserver:
+      resource-server:
         jwt:
           issuer-uri: http://localhost:9000
       client:
@@ -34,7 +34,6 @@ spring:
         provider:
           spring:
             issuer-uri: "http://localhost:9000"
-            
   words:
     base-uri: http://127.0.0.1:8082
 
@@ -46,6 +45,7 @@ spring:
   config:
     activate:
       on-profile: production
+    import: optional:configserver:http://host.docker.internal:8088
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
@@ -56,6 +56,22 @@ spring:
       hibernate:
         generate-ddl: false
     show-sql: true
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: ${ISSUER_URI}
+      client:
+        registration:
+          messaging-client-token-exchange:
+            client-id: "client"
+            client-secret: "secret"
+            provider: "spring"
+            authorization-grant-type: client_credentials
+            client-name: messaging-client-client-credentials
+        provider:
+          spring:
+            issuer-uri: ${ISSUER_URI}
 
 ---
 

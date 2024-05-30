@@ -6,4 +6,27 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: TRACE
+    org.springframework.web: INFO
+    org.springframework.security.oauth2: TRACE
+    org.springframework.cloud.config: DEBUG
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+      - url: /word-service/v3/api-docs
+        name: Word Service
+      - url: /main-service/v3/api-docs
+        name: Main Service

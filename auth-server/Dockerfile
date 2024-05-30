@@ -1,4 +1,4 @@
-FROM gradle:latest AS BUILD
+FROM gradle:7.6.4 AS BUILD
 WORKDIR /app
 COPY build.gradle .
 COPY settings.gradle .
@@ -10,4 +10,4 @@ ENV ARTIFACT_NAME=auth-server-0.0.1-SNAPSHOT.jar
 WORKDIR /app
 COPY --from=BUILD /app/build/libs/$ARTIFACT_NAME .
 
-ENTRYPOINT exec java -jar ${ARTIFACT_NAME}
+ENTRYPOINT exec java -jar ${ARTIFACT_NAME} --spring.profiles.active=production

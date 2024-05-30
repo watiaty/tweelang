@@ -1,34 +1,121 @@
 services:
-  app:
+  userword-service:
     image: 'learn-language:latest'
     build:
       context: learn-language
       dockerfile: Dockerfile
-    container_name: app
     depends_on:
-      - db
+      - discover-server
+      - api-gateway
+      - config-server
+      - auth-server
+      - db3
     environment:
-      - DATABASE_URL=jdbc:postgresql://db:5432/learn-language
-      - DATABASE_USERNAME=waitaty
-      - DATABASE_PASSWORD=ijb^A9ooQFK9DTXA6z^p
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_PROFILES_ACTIVE=production
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5435/userwords
+      DATABASE_USERNAME: waitaty
+      DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
+      ISSUER_URI: http://host.docker.internal:9000
+    ports:
+      - "8082:8082"
+
+  word-service:
+    image: 'word-service:latest'
+    build:
+      context: word-service
+      dockerfile: Dockerfile
+    depends_on:
+      - db2
+      - discover-server
+      - api-gateway
+      - config-server
+      - auth-server
+    environment:
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5434/words
+      DATABASE_USERNAME: waitaty
+      DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
+      ISSUER_URI: http://host.docker.internal:9000
+    ports:
+      - "8083:8083"
+
+  api-gateway:
+    image: 'api-gateway:latest'
+    build:
+      context: api-gateway
+      dockerfile: Dockerfile
+    depends_on:
+      - discover-server
+      - config-server
+    environment:
+      FRONTEND: http://host.docker.internal:8081
+      REDIRECT_URI: http://localhost:8080/login/oauth2/code/{registrationId}
+      ISSUER_URI: http://host.docker.internal:9000
     ports:
       - "8080:8080"
 
-  db:
-    image: 'postgres:alpine3.19'
-    container_name: db
+  auth-server:
+    image: 'auth-server:latest'
+    build:
+      context: auth-server
+      dockerfile: Dockerfile
+    depends_on:
+      - db1
     environment:
-      - POSTGRES_DB=learn-language
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5433/users
+      DATABASE_USERNAME: waitaty
+      DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "9000:9000"
+
+  db1:
+    image: 'postgres:alpine3.19'
+    container_name: db1
+    environment:
+      POSTGRES_DB: "users"
+      POSTGRES_USER: "waitaty"
+      POSTGRES_PASSWORD: "ijb^A9ooQFK9DTXA6z^p"
+    ports:
+      - "5433:5432"
+
+  config-server:
+    image: 'config-server:latest'
+    build:
+      context: config-server
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+
+  discover-server:
+    image: 'discover-server:latest'
+    build:
+      context: discover-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+
+  db2:
+    image: 'postgres:alpine3.19'
+    container_name: db2
+    environment:
+      - POSTGRES_DB=words
       - POSTGRES_USER=waitaty
       - POSTGRES_PASSWORD=ijb^A9ooQFK9DTXA6z^p
     ports:
-      - "5431:5432"
+      - "5434:5432"
+
+  db3:
+    image: 'postgres:alpine3.19'
+    container_name: db3
+    environment:
+      - POSTGRES_DB=userwords
+      - POSTGRES_USER=waitaty
+      - POSTGRES_PASSWORD=ijb^A9ooQFK9DTXA6z^p
+    ports:
+      - "5435:5432"
 
   angular-app:
     build:
       context: frontend-angular
       dockerfile: Dockerfile
     ports:
-      - "8081:4200"
+      - "8081:8081"
