@@ -4,7 +4,7 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: "config-server:http://localhost:8088"
+    import: "configserver:http://localhost:8088"
   datasource:
     url: jdbc:postgresql://localhost:5432/learn-language
     username: postgres

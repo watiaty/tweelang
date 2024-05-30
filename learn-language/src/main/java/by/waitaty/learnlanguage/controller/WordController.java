@@ -114,70 +114,11 @@ public class WordController {
     }
 
     @Transactional
-    @PostMapping("/translation/add")
-    @SecurityRequirement(name = "JWT")
-    public void addTranslationToUser(@RequestBody Long id, @AuthenticationPrincipal Jwt jwt) {
-        Long userId = jwt.getClaim("userId");
-//        Translation translation = wordTranslationService.findById(id);
-        Long translation = 1L;
-        UserWord userWord = userWordService.getUserWordByWord(translation, userId)
-                .orElse(UserWord.builder()
-                        .idWord(translation)
-                        .idUser(userId)
-                        .repeatStage(1)
-                        .repeatDate(LocalDate.now())
-                        .build());
-
-//        userWord.addTranslation(translation);
-        userWordService.update(userWord);
-    }
-
-    @Transactional
-    @PostMapping("/translation/delete")
-    @SecurityRequirement(name = "JWT")
-    public void deleteTranslationToUser(@RequestBody Long id, @AuthenticationPrincipal Jwt jwt) {
-        Long userId = jwt.getClaim("userId");
-//        Translation translation = wordTranslationService.findById(id);
-//        wordTranslationService.decNumberOfUses(translation);
-//
-//        userWordService.getUserWordByTranslationAndUser(translation, user).ifPresent(userWord -> {
-//            userWord.deleteTranslation(translation);
-//            if (userWord.getTranslations().isEmpty()) {
-//                userWordService.delete(userWord.getId());
-//            } else {
-//                userWordService.update(userWord);
-//            }
-//        });
-    }
-
-
-    @Transactional
     @DeleteMapping("/delete/{id}")
     @SecurityRequirement(name = "JWT")
     public void deleteUserWord(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
         userWordService.delete(id, userId);
-    }
-
-    @Transactional
-    @PostMapping("/translation/new")
-    @SecurityRequirement(name = "JWT")
-    public void newTranslationToUser(@RequestBody AddNewTranslationRequest request, @AuthenticationPrincipal Jwt jwt) {
-//        User user = userService.findByUsername(principal.getName()).orElseThrow();
-//        Word word = wordClient.findById(request.getId());
-//        Word translationWord = wordClient.findOrCreate(request.getTranslation(), user.getNativeLang().getId(), "");
-//        Translation translation = wordTranslationService.addWordTranslation(translationWord, word);
-//
-//        UserWord userWord = userWordService.getUserWordByWord(word.getId(), user)
-//                .orElseGet(() -> UserWord.builder()
-//                        .user(user)
-//                        .idWord(word.getId())
-//                        .repeatStage(1)
-//                        .repeatDate(LocalDate.now())
-//                        .build());
-//
-//        userWord.addTranslation(translation);
-//        userWordService.update(userWord);
     }
 
     @PostMapping("/add")

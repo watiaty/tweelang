@@ -34,10 +34,6 @@ public class UserWordServiceImpl implements UserWordService {
         return userWordRepository.save(userWord);
     }
 
-//    public Optional<UserWord> getUserWordByTranslationAndUser(Translation translation, User user) {
-//        return userWordRepository.findUSerWordByTranslationsContainsAndUser(translation, user);
-//    }
-
     public void delete(Long id, Long userId) {
         userWordRepository.deleteByIdWordAndIdUser(id, userId);
     }

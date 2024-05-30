@@ -2,11 +2,8 @@ package by.waitaty.learnlanguage.repository;
 
 import by.waitaty.learnlanguage.entity.UserWord;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,10 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserWordRepository extends JpaRepository<UserWord, Long> {
-    @Modifying
-    @Query(value = "insert into user_word (id_word, id_user) VALUES (:wordId, :userId)", nativeQuery = true)
-    void add(@Param("wordId") Long wordId, @Param("userId") Long userId);
-
     List<UserWord> findAllByIdUserOrderByIdAsc(Long userId);
 
     @Query("""
@@ -35,6 +28,4 @@ public interface UserWordRepository extends JpaRepository<UserWord, Long> {
     Optional<UserWord> findByIdWordAndIdUser(Long word, Long userId);
 
     void deleteByIdWordAndIdUser(Long id, Long userId);
-
-//    Optional<UserWord> findUSerWordByTranslationsContainsAndUser(Translation translation, User user);
 }
