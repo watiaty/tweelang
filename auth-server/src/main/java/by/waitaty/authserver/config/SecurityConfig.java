@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -15,9 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -56,6 +55,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Value("${uri}")
+    String uri;
     private final UserServiceImpl userService;
 
     @Bean
@@ -126,8 +127,8 @@ public class SecurityConfig {
                     types.add(AuthorizationGrantType.REFRESH_TOKEN);
                     types.add(AuthorizationGrantType.CLIENT_CREDENTIALS);
                 })
-                .redirectUri("http://localhost:8080/login/oauth2/code/gateway")
-                .postLogoutRedirectUri("http://localhost:8080/")
+                .redirectUri(uri + ":8080/login/oauth2/code/gateway")
+                .postLogoutRedirectUri(uri + ":8080/")
                 .scopes(scopes -> {
                     scopes.add(OidcScopes.OPENID);
                     scopes.add(OidcScopes.PROFILE);

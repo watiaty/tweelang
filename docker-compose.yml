@@ -14,7 +14,7 @@ services:
       DATABASE_URL: jdbc:postgresql://host.docker.internal:5435/userwords
       DATABASE_USERNAME: waitaty
       DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
-      ISSUER_URI: http://host.docker.internal:9000
+      ISSUER_URI: http://${LOCAL_IP}:9000
     ports:
       - "8082:8082"
 
@@ -33,7 +33,7 @@ services:
       DATABASE_URL: jdbc:postgresql://host.docker.internal:5434/words
       DATABASE_USERNAME: waitaty
       DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
-      ISSUER_URI: http://host.docker.internal:9000
+      ISSUER_URI: http://${LOCAL_IP}:9000
     ports:
       - "8083:8083"
 
@@ -46,9 +46,9 @@ services:
       - discover-server
       - config-server
     environment:
-      FRONTEND: http://host.docker.internal:8081
-      REDIRECT_URI: http://localhost:8080/login/oauth2/code/{registrationId}
-      ISSUER_URI: http://host.docker.internal:9000
+      FRONTEND: http://${LOCAL_IP}:8081
+      REDIRECT_URI: http://${LOCAL_IP}:8080/login/oauth2/code/{registrationId}
+      ISSUER_URI: http://${LOCAL_IP}:9000
     ports:
       - "8080:8080"
 
@@ -64,6 +64,7 @@ services:
       DATABASE_USERNAME: waitaty
       DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      URI: http://192.168.31.54
     ports:
       - "9000:9000"
 
