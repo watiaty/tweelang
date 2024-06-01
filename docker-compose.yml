@@ -64,7 +64,7 @@ services:
       DATABASE_USERNAME: waitaty
       DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      URI: http://192.168.31.54
+      URI: http://${LOCAL_IP}
     ports:
       - "9000:9000"
 
