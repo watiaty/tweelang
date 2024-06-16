@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://host.docker.internal:8761/eureka/
+      defaultZone: ${EUREKA_URI}
 
 logging:
   level:
