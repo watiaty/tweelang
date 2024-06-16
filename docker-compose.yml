@@ -65,6 +65,10 @@ services:
       DATABASE_USERNAME: waitaty
       DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_URI: http://192.168.0.11:8761/eureka/
+      GOOGLE_REDIRECT_URI: "http://tweelang.by/login/oauth2/code/google"
+      GATEWAY_REDIRECT_URI: "http://tweelang.by/login/oauth2/code/gateway"
+      POST_LOGOUT: "http://tweelang.by"
     ports:
       - "9000:9000"
 

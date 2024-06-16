@@ -55,7 +55,7 @@ server:
 eureka:
     client:
         service-url:
-            defaultZone: http://192.168.0.11:8761/eureka/
+            defaultZone: ${EUREKA_URI}
 
 spring:
     application:
@@ -79,7 +79,7 @@ spring:
                         client-id: 208637381685-8nqvjccontos5ld0jl6tbrn2i0777obd.apps.googleusercontent.com
                         client-secret: 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
                         scope: openid, profile, email
-                        redirect-uri: "http://auth.tweelang.by/login/oauth2/code/google"
+                        redirect-uri: ${GOOGLE_REDIRECT_URI}
                         authorization-grant-type: authorization_code
                         client-name: google
                 provider:
@@ -89,7 +89,8 @@ spring:
                         user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
                         user-name-attribute: sub
 
-uri: http://tweelang.by
+GATEWAY_REDIRECT_URI: ${GATEWAY_REDIRECT_URI}
+POST_LOGOUT: ${POST_LOGOUT}
 
 logging:
     level:

@@ -18,12 +18,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
@@ -47,12 +45,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -63,8 +59,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${uri}")
-    String uri;
+    @Value("${GATEWAY_REDIRECT_URI}")
+    private String GATEWAY_REDIRECT_URI;
+
+    @Value("${POST_LOGOUT}")
+    private String POST_LOGOUT;
+
     private final UserServiceImpl userService;
 
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
@@ -147,8 +147,8 @@ public class SecurityConfig {
                     types.add(AuthorizationGrantType.REFRESH_TOKEN);
                     types.add(AuthorizationGrantType.CLIENT_CREDENTIALS);
                 })
-                .redirectUri("http://tweelang.by/login/oauth2/code/gateway")
-                .postLogoutRedirectUri("http://tweelang.by")
+                .redirectUri(GATEWAY_REDIRECT_URI)
+                .postLogoutRedirectUri(POST_LOGOUT)
                 .scopes(scopes -> {
                     scopes.add(OidcScopes.OPENID);
                     scopes.add(OidcScopes.PROFILE);
