@@ -1,6 +1,7 @@
 package by.waitaty.authserver.config;
 
 import by.waitaty.authserver.model.User;
+import by.waitaty.authserver.security.CustomAuthenticationSuccessHandler;
 import by.waitaty.authserver.service.UserServiceImpl;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -17,10 +18,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -41,10 +47,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -58,6 +66,8 @@ public class SecurityConfig {
     @Value("${uri}")
     String uri;
     private final UserServiceImpl userService;
+
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Bean
     @Order(1)
@@ -90,6 +100,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorization")
+                                .authorizationRequestRepository(customAuthorizationRequestRepository()))
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/login/oauth2/code/*"))
+                        .successHandler(customAuthenticationSuccessHandler)
+                        .failureUrl("/login?error=true")
+                )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .permitAll()
@@ -103,7 +123,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://tweelang.by");
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return source;
@@ -127,8 +147,8 @@ public class SecurityConfig {
                     types.add(AuthorizationGrantType.REFRESH_TOKEN);
                     types.add(AuthorizationGrantType.CLIENT_CREDENTIALS);
                 })
-                .redirectUri(uri + ":8080/login/oauth2/code/gateway")
-                .postLogoutRedirectUri(uri + ":8080/")
+                .redirectUri("http://tweelang.by/login/oauth2/code/gateway")
+                .postLogoutRedirectUri("http://tweelang.by")
                 .scopes(scopes -> {
                     scopes.add(OidcScopes.OPENID);
                     scopes.add(OidcScopes.PROFILE);
@@ -191,7 +211,7 @@ public class SecurityConfig {
                             .collect(Collectors.toSet());
                     claims.put("authorities", authorities);
                     if (!context.getPrincipal().getName().equals("client")) {
-                        User user = userService.findByUsername(context.getPrincipal().getName()).orElseThrow();
+                        User user = userService.findByUsername(context.getPrincipal().getName());
                         claims.put("userId", user.getId());
                         claims.put("native", user.getNativeLang());
                     }
@@ -209,5 +229,9 @@ public class SecurityConfig {
                 context.getClaims().claim("authorities", authorities);
             }
         };
+    }
+
+    private AuthorizationRequestRepository<OAuth2AuthorizationRequest> customAuthorizationRequestRepository() {
+        return new HttpSessionOAuth2AuthorizationRequestRepository();
     }
 }

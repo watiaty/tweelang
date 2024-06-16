@@ -1,36 +1,65 @@
 server:
     port: 9000
 
+eureka:
+    client:
+        service-url:
+            defaultZone: http://192.168.0.11:8761/eureka/
+
 spring:
     application:
-        name: authorization-server
+        name: auth-server
     config:
         activate:
             on-profile: dev
     datasource:
-        url: jdbc:postgresql://localhost:5432/learn-language
-        username: postgres
-        password: root
+        url: jdbc:postgresql://192.168.0.11:5433/users
+        username: waitaty
+        password: ijb^A9ooQFK9DTXA6z^p
         driver-class-name: org.postgresql.Driver
     thymeleaf:
         prefix: classpath:/templates/
         suffix: .html
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        client-id: 208637381685-8nqvjccontos5ld0jl6tbrn2i0777obd.apps.googleusercontent.com
+                        client-secret: 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
+                        scope: openid, profile, email
+                        redirect-uri: "{baseUrl}/login/oauth2/code/google"
+                        authorization-grant-type: authorization_code
+                        client-name: google
+                provider:
+                    google:
+                        authorization-uri: https://accounts.google.com/o/oauth2/auth
+                        token-uri: https://oauth2.googleapis.com/token
+                        user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+                        user-name-attribute: sub
 
 logging:
     level:
         root: INFO
-        org.springframework.security: TRACE
-        org.springframework.web: INFO
-        org.springframework.security.oauth2: TRACE
+        org.springframework.security: DEBUG
+        org.springframework.web: DEBUG
+        org.springframework.security.oauth2: DEBUG
+
+uri: http://tweelang.by
 
 ---
 
 server:
     port: 9000
 
+eureka:
+    client:
+        service-url:
+            defaultZone: http://192.168.0.11:8761/eureka/
+
 spring:
     application:
-        name: authorization-server
+        name: auth-server
     config:
         activate:
             on-profile: production
@@ -42,5 +71,29 @@ spring:
     thymeleaf:
         prefix: classpath:/templates/
         suffix: .html
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        client-id: 208637381685-8nqvjccontos5ld0jl6tbrn2i0777obd.apps.googleusercontent.com
+                        client-secret: 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
+                        scope: openid, profile, email
+                        redirect-uri: "http://auth.tweelang.by/login/oauth2/code/google"
+                        authorization-grant-type: authorization_code
+                        client-name: google
+                provider:
+                    google:
+                        authorization-uri: https://accounts.google.com/o/oauth2/auth
+                        token-uri: https://oauth2.googleapis.com/token
+                        user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+                        user-name-attribute: sub
 
-uri: ${URI}
+uri: http://tweelang.by
+
+logging:
+    level:
+        root: INFO
+        org.springframework.security: DEBUG
+        org.springframework.web: DEBUG
+        org.springframework.security.oauth2: DEBUG

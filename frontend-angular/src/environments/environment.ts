@@ -1,4 +1,4 @@
-const url = 'http://localhost:8080';
+const url = 'http://tweelang.by';
 export const environment = {
   production: false,
   apiUrl: url,
@@ -11,5 +11,4 @@ export const environment = {
   accessTokenString: 'access-token',
   refreshTokenString: 'refresh-token',
   userString: 'current-user',
-
 };

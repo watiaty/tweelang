@@ -64,7 +64,7 @@ spring:
   config:
     activate:
       on-profile: production
-    import: optional:configserver:http://host.docker.internal:8088
+    import: optional:configserver:${CONFIG_IP}
   cloud:
     gateway:
       default-filters:

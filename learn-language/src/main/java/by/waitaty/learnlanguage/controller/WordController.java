@@ -39,7 +39,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/words")
@@ -69,7 +71,7 @@ public class WordController {
                 .build());
     }
 
-    @PostMapping(path = "/train")
+    @PostMapping(path = "/practice")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
     public List<UserWordDtoResponse> getWordsForTraining(
@@ -77,22 +79,46 @@ public class WordController {
             @AuthenticationPrincipal Jwt jwt,
             @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
         Long userId = jwt.getClaim("userId");
-        List<Long> idList = userWordService.getCountLearningWords(wordTrainDtoRequest.getQuantity(), userId)
+        List<Long> wordIds = getLearningWordIds(wordTrainDtoRequest.getQuantity(), userId);
+
+        List<UserWordDtoResponse> userWordDtoResponses = fetchWordsFromService(wordIds, authorizedClient);
+
+        Collections.shuffle(userWordDtoResponses);
+
+        return userWordDtoResponses;
+    }
+
+    /**
+     * Retrieves a list of word IDs for learning.
+     * @param quantity the number of words to retrieve
+     * @param userId the ID of the user
+     * @return a list of word IDs
+     */
+    private List<Long> getLearningWordIds(int quantity, Long userId) {
+        return userWordService.getCountLearningWords(quantity, userId)
                 .stream()
                 .map(UserWord::getIdWord)
-                .toList();
+                .collect(Collectors.toList());
+    }
 
+    /**
+     * Fetches words from an external service.
+     * @param wordIds the list of word IDs
+     * @param authorizedClient the authorized client for interacting with the service
+     * @return a list of user word DTO responses
+     */
+    private List<UserWordDtoResponse> fetchWordsFromService(List<Long> wordIds, OAuth2AuthorizedClient authorizedClient) {
         WordClient wordClient = getWordClient(authorizedClient);
         return wordClient.getByIds(GetUserWordsRequest.builder()
-                        .ids(idList)
+                        .ids(wordIds)
                         .language("EN")
                         .build())
                 .stream()
                 .map(wordDtoResponse -> new UserWordDtoResponse(
                         wordDtoResponse.getId(),
                         wordDtoResponse.getWord(),
-                        wordDtoResponse.getTranslations().stream().map(TranslationDto::getTranslation).toList()))
-                .toList();
+                        wordDtoResponse.getTranslations().stream().map(TranslationDto::getTranslation).collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 
     @PatchMapping("/update/{id}")

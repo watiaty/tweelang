@@ -5,7 +5,6 @@ import {Word} from "../word";
 import {environment} from "../../environments/environment";
 import {WordInfo} from "../word-info";
 import {TrainRequest} from "../train-request";
-import {Language} from "../language";
 
 
 const URLS = `${environment.wordUrl}`;
@@ -26,7 +25,7 @@ export class WordService {
   }
 
   public findWordsForTraining(trainRequest: TrainRequest): Observable<Word[]> {
-    return this.http.post<Word[]>(URLSw + '/train', trainRequest);
+    return this.http.post<Word[]>(URLSw + '/practice', trainRequest);
   }
 
   public findAll(): Observable<Word[]> {

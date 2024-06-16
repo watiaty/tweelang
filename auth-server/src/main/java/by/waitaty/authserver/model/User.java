@@ -1,21 +1,17 @@
 package by.waitaty.authserver.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,16 +39,8 @@ public class User implements UserDetails {
     @Column(name = "native")
     private Language nativeLang;
 
-//    @ElementCollection
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "langs")
-//    private List<Language> languages;
-
     @Enumerated(EnumType.STRING)
     private Role role;
-
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-//    private List<Token> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

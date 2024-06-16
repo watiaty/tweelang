@@ -16,14 +16,13 @@ databaseChangeLog:
               - column:
                   name: id_user
                   type: bigint
-                  constraints:
-                    foreignKeyName: id_user_word_user
-                    referencedTableName: users
-                    referencedColumnNames: id
               - column:
                   name: id_word
                   type: bigint
               - column:
-                  name: is_learning
-                  type: boolean
-                  defaultValue: "true"
+                  name: repeat_date
+                  type: DATE
+              - column:
+                  name: repeat_stage
+                  type: INTEGER
+                  defaultValue: 1

@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import {WordService} from "../_services/word-service.service";
 import {Word} from "../word";
 import {TrainRequest} from "../train-request";
-import {StorageService} from "../_services/storage.service";
 import {MatSelectChange} from "@angular/material/select";
 import {Language} from "../language";
 
