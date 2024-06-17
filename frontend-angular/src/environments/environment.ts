@@ -1,4 +1,4 @@
-const url = 'http://tweelang.by';
+const url = 'https://tweelang.onrender.com';
 export const environment = {
   production: false,
   apiUrl: url,
