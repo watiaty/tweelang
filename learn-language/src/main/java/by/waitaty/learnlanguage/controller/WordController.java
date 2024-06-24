@@ -5,6 +5,7 @@ import by.waitaty.learnlanguage.dto.Mapper;
 import by.waitaty.learnlanguage.dto.TranslationDto;
 import by.waitaty.learnlanguage.dto.WordDtoResponse;
 import by.waitaty.learnlanguage.dto.request.AddNewTranslationRequest;
+import by.waitaty.learnlanguage.dto.request.AddUserWordDtoRequest;
 import by.waitaty.learnlanguage.dto.request.AddWordRequest;
 import by.waitaty.learnlanguage.dto.request.GetUserWordsRequest;
 import by.waitaty.learnlanguage.dto.request.WordTrainDtoRequest;
@@ -12,6 +13,7 @@ import by.waitaty.learnlanguage.dto.response.UserWordDtoResponse;
 import by.waitaty.learnlanguage.entity.Language;
 import by.waitaty.learnlanguage.entity.UserWord;
 import by.waitaty.learnlanguage.entity.Word;
+import by.waitaty.learnlanguage.entity.WordStatus;
 import by.waitaty.learnlanguage.service.impl.UserWordServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -180,6 +182,20 @@ public class WordController {
         UserWord userWord = createUserWord(userId, word, addWordRequest.getTranslations(), wordClient);
         UserWord savedUserWord = userWordService.update(userWord);
         return ResponseEntity.ok(mapper.userWordToWordDtoResponse(savedUserWord));
+    }
+
+    @PostMapping("/add-new-word")
+    @SecurityRequirement(name = "JWT")
+    @Transactional
+    public void addWordByIdAndStatus(
+            @RequestBody AddUserWordDtoRequest addWordRequest,
+            @AuthenticationPrincipal Jwt jwt) {
+        Long userId = jwt.getClaim("userId");
+        userWordService.update(UserWord.builder()
+                        .idUser(userId)
+                        .idWord(addWordRequest.getId())
+                        .status(addWordRequest.getStatus())
+                .build());
     }
 
     @PostMapping("/csv")
