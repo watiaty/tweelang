@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-status-to-word
+      author: Yauheni Haikou
+      changes:
+        - addColumn:
+            tableName: word
+            columns:
+              - column:
+                  name: status
+                  type: INTEGER
+                  defaultValueNumeric: 0
