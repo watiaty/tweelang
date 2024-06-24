@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-user-word-table-add-default-repeat-date
+      author: Yauheni Haikou
+      changes:
+        - addDefaultValue:
+            columnName: repeat_date
+            tableName: user_word
+            defaultValueComputed: CURRENT_DATE
