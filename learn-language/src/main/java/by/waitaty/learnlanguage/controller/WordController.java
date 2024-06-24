@@ -71,6 +71,26 @@ public class WordController {
                 .build());
     }
 
+    @GetMapping(path = "/learn/{lang}")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public WordDtoResponse getUnstudiedWord(
+            @PathVariable Language lang,
+            @AuthenticationPrincipal Jwt jwt,
+            @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
+        Long userId = jwt.getClaim("userId");
+        List<Long> idList = userWordService.getAllByUserId(userId).stream()
+                .map(UserWord::getIdWord)
+                .toList();
+
+        WordClient wordClient = getWordClient(authorizedClient);
+
+        return wordClient.findWordExcludingIdsByLanguage(GetUserWordsRequest.builder()
+                .ids(idList)
+                .language(lang.name())
+                .build());
+    }
+
     @PostMapping(path = "/practice")
     @SecurityRequirement(name = "JWT")
     @ResponseBody

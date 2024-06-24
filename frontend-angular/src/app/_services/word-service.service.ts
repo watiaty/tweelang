@@ -84,4 +84,8 @@ export class WordService {
 
     return this.http.request(req);
   }
+
+  findUnstudiedWord(lang: string) {
+    return this.http.get<Word>(URLSw + '/learn' + '/EN');
+  }
 }

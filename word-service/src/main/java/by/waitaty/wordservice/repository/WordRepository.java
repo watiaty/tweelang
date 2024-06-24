@@ -28,6 +28,7 @@ public interface WordRepository extends JpaRepository<Word, Long> {
     List<Word> findAllByLanguageOrderByWeightDesc(@Param("language") String language);
 
     List<Word> findByIdInAndLanguage(List<Long> ids, String language);
+    Word findFirstByIdNotInAndLanguage(List<Long> ids, String language);
 
     @Modifying
     @Transactional

@@ -16,7 +16,8 @@ export class TrainComponent {
   words: Word[] = [];
   id: number = 0;
   langs!: Language[];
-  currentUser: any;
+  mistakes: number = 0;
+  streak: number = 0;
   inputValue: string = '';
   alertVisible: boolean = false;
   translateVisible: boolean = false;
@@ -51,13 +52,17 @@ export class TrainComponent {
         this.wordService.updateStatus(this.words[this.id].id, "learned").subscribe();
       } else {
         this.wordService.updateStatus(this.words[this.id].id, "learning").subscribe();
+        this.words.push(this.words[this.id]);
       }
       this.alertVisible = false;
       this.translateVisible = false;
       this.id++;
       this.inputValue = "";
+      this.streak++;
     } else {
       this.alertVisible = true;
+      this.mistakes++;
+      this.streak = 0;
     }
   }
 

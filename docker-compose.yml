@@ -46,9 +46,9 @@ services:
       - discover-server
       - config-server
     environment:
-      FRONTEND: http://${LOCAL_IP}:8081
+      FRONTEND: http://host.docker.internal:8081
       CONFIG_IP: http://host.docker.internal:8088
-      REDIRECT_URI: "http://tweelang.by/login/oauth2/code/{registrationId}"
+      REDIRECT_URI: http://tweelang.by/login/oauth2/code/{registrationId}
       ISSUER_URI: http://192.168.0.11:9000
     ports:
       - "8080:8080"
@@ -65,10 +65,10 @@ services:
       DATABASE_USERNAME: waitaty
       DATABASE_PASSWORD: ijb^A9ooQFK9DTXA6z^p
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      EUREKA_URI: http://192.168.0.11:8761/eureka/
-      GOOGLE_REDIRECT_URI: "http://tweelang.by/login/oauth2/code/google"
-      GATEWAY_REDIRECT_URI: "http://tweelang.by/login/oauth2/code/gateway"
-      POST_LOGOUT: "http://tweelang.by"
+      EUREKA_URI: http://host.docker.internal:8761/eureka/
+      GOOGLE_REDIRECT_URI: http://auth.tweelang.by/login/oauth2/code/google
+      GATEWAY_REDIRECT_URI: http://tweelang.by/login/oauth2/code/gateway
+      POST_LOGOUT: http://tweelang.by
     ports:
       - "9000:9000"
 
@@ -76,9 +76,9 @@ services:
     image: 'postgres:alpine3.19'
     container_name: db1
     environment:
-      POSTGRES_DB: "users"
-      POSTGRES_USER: "waitaty"
-      POSTGRES_PASSWORD: "ijb^A9ooQFK9DTXA6z^p"
+      POSTGRES_DB: users
+      POSTGRES_USER: waitaty
+      POSTGRES_PASSWORD: ijb^A9ooQFK9DTXA6z^p
     ports:
       - "5433:5432"
 
@@ -104,9 +104,9 @@ services:
     image: 'postgres:alpine3.19'
     container_name: db2
     environment:
-      - POSTGRES_DB=words
-      - POSTGRES_USER=waitaty
-      - POSTGRES_PASSWORD=ijb^A9ooQFK9DTXA6z^p
+      POSTGRE: S_DB=words
+      POSTGRES_USER: waitaty
+      POSTGRES_PASSWORD: ijb^A9ooQFK9DTXA6z^p
     ports:
       - "5434:5432"
 
@@ -114,9 +114,9 @@ services:
     image: 'postgres:alpine3.19'
     container_name: db3
     environment:
-      - POSTGRES_DB=userwords
-      - POSTGRES_USER=waitaty
-      - POSTGRES_PASSWORD=ijb^A9ooQFK9DTXA6z^p
+      POSTGRES_DB: userwords
+      POSTGRES_USER: waitaty
+      POSTGRES_PASSWORD: ijb^A9ooQFK9DTXA6z^p
     ports:
       - "5435:5432"
 

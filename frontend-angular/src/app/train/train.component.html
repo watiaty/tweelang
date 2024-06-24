@@ -21,7 +21,13 @@
       <a type="button" mat-stroked-button class="btn btn-outline-dark" (click)="startTrain()">Start</a>
     </ng-container>
     <ng-container *ngIf="!visible">
-      <label class="text-white">{{ id }} / {{ words.length }}</label>
+      <div class="d-flex justify-content-between align-items-center">
+        <label class="text-white">{{ id }} / {{ words.length }}</label>
+        <div>
+          <label class="text-danger">Mistakes: {{ mistakes }}</label>
+          <label class="text-success">Streak: {{ streak }}</label>
+        </div>
+      </div>
       <div class="text-center">
         <mat-label class="text-white">{{ words[id].translations }}</mat-label>
         <div>

@@ -4,6 +4,7 @@ import by.waitaty.learnlanguage.dto.WordDtoResponse;
 import by.waitaty.learnlanguage.dto.request.AddNewTranslationRequest;
 import by.waitaty.learnlanguage.dto.request.GetUserWordsRequest;
 import by.waitaty.learnlanguage.entity.Word;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
@@ -22,4 +23,7 @@ public interface WordClient {
 
     @PostExchange("/api/v1/translation/add")
     void addTranslation(@RequestBody AddNewTranslationRequest request);
+
+    @GetExchange("/api/v1/word/exclude")
+    WordDtoResponse findWordExcludingIdsByLanguage(@RequestBody GetUserWordsRequest request);
 }

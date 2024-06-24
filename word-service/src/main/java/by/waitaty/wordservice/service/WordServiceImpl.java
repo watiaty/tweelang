@@ -55,6 +55,10 @@ public class WordServiceImpl implements WordService {
         return wordRepository.findByIdInAndLanguage(ids, lang);
     }
 
+    public Word findWordExceptListByLang(List<Long> ids, String lang) {
+        return wordRepository.findFirstByIdNotInAndLanguage(ids, lang);
+    }
+
     public Word findById(Long id) {
         return wordRepository.findById(id).orElseThrow();
     }

@@ -10,6 +10,7 @@ import {TrainComponent} from "./train/train.component";
 import {HomeComponent} from "./home/home.component";
 import {AdminComponent} from "./admin/admin.component";
 import {RatingComponent} from "./rating/rating.component";
+import {WordNewComponent} from "./word-new/word-new.component";
 
 const routes: Routes = [
   {path: 'words', component: WordListComponent},
@@ -22,7 +23,8 @@ const routes: Routes = [
   {path: 'search', component: HomeComponent},
   {path: '', component: HomeComponent},
   {path: 'admin', component: AdminComponent},
-  {path: 'rating', component: RatingComponent}
+  {path: 'rating', component: RatingComponent},
+  {path: 'learn', component: WordNewComponent}
 ];
 
 @NgModule({

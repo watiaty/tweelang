@@ -70,6 +70,16 @@ public class WordController {
                 .toList();
     }
 
+    @GetMapping(path = "/exclude")
+    public WordDtoResponse findWordExcludingIdsByLanguage(@RequestBody GetUserWordsRequest request) {
+        Word word = wordService.findWordExceptListByLang(request.getIds(), request.getLanguage());
+        return WordDtoResponse.builder()
+                .word(word.getWord())
+                .id(word.getId())
+                .translations(translationService.findAllById(word.getId()))
+                .build();
+    }
+
     @GetMapping("/search")
     public List<WordInfoDtoResponse> search(@RequestParam("q") String searchText) {
         return wordService.searchWords(searchText).stream()

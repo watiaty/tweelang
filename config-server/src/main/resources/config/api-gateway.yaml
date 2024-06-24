@@ -6,7 +6,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: https://discovery-service-qq0j.onrender.com/
+      defaultZone: http://host.docker.internal:8761/eureka/
 
 logging:
   level:

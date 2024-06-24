@@ -47,6 +47,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import { RatingComponent } from './rating/rating.component';
 import {MatTooltip} from "@angular/material/tooltip";
+import { WordNewComponent } from './word-new/word-new.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import {MatTooltip} from "@angular/material/tooltip";
     TrainComponent,
     HomeComponent,
     AdminComponent,
-    RatingComponent
+    RatingComponent,
+    WordNewComponent
   ],
     imports: [
         MatChipsModule,
