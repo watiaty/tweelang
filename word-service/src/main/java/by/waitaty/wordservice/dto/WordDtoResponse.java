@@ -13,5 +13,6 @@ public class WordDtoResponse {
     private Long id;
     private String word;
     private String transcription;
-    private List<TranslationDto> translations;
+    private String definition;
+    private List<String> translations;
 }

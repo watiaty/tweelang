@@ -13,22 +13,18 @@ import java.util.Optional;
 
 @Repository
 public interface WordRepository extends JpaRepository<Word, Long> {
-    List<Word> findAllByLanguage(String language);
+    Optional<Word> findFirstByTextAndLanguage_Name(String word, String language);
 
-    Optional<Word> findFirstByWordAndLanguage(String word, String language);
+    Optional<Word> findByTextAndLanguage_Code(String name, String languageCode);
 
-    Optional<Word> findByWordAndLanguage(String name, String language);
+    List<Word> findAllByTextStartingWith(@Param("searchText") String searchText);
 
-    List<Word> findAllByWordStartingWith(String searchText);
+    @Query("SELECT w FROM Word w INNER JOIN Language l ON w.language.id = l.id WHERE w.language.code = :languageCode ORDER BY w.weight DESC")
+    List<Word> findAllByLanguageOrderByWeightDesc(@Param("languageCode") String languageCode);
 
-    Optional<Word> findById(Long id);
+    List<Word> findByIdInAndLanguage_Name(List<Long> ids, String language);
 
-
-    @Query("SELECT w FROM Word w LEFT JOIN WordForm wf ON w.id = wf.derivedWord.id WHERE w.language = :language AND wf.derivedWord IS NULL ORDER BY w.weight DESC")
-    List<Word> findAllByLanguageOrderByWeightDesc(@Param("language") String language);
-
-    List<Word> findByIdInAndLanguage(List<Long> ids, String language);
-    Word findFirstByIdNotInAndLanguage(List<Long> ids, String language);
+    Word findFirstByIdNotInAndLanguage_Name(List<Long> ids, String language);
 
     @Modifying
     @Transactional

@@ -13,11 +13,11 @@
     <a [routerLink]="['/addword']">Add word</a>
     <mat-list *ngFor="let word of words">
       <mat-list-item>
-        <img src="assets/flags/{{word.language}}.jpg" alt="language" style="width: 20px">
-        <a [routerLink]="['/word', word.language, word.word]">{{ word.word }}</a>
-        <ng-container *ngFor="let translation of word.translations; let last = last">
-          {{ translation.translation }}{{ !last ? ', ' : '' }}
-        </ng-container>
+        <img src="assets/flags/{{word.language}}.jpg" alt="language" style="width: 20px; margin-right: 5px;">
+        <a [routerLink]="['/word', word.language, word.text]">{{ word.text }}</a>
+<!--        <ng-container *ngFor="let translation of word.translations; let last = last">-->
+<!--          {{ translation.translation }}{{ !last ? ', ' : '' }}-->
+<!--        </ng-container>-->
       </mat-list-item>
       <mat-divider></mat-divider>
     </mat-list>

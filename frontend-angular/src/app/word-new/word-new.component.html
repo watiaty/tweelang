@@ -1,7 +1,7 @@
 <div class="card my-5">
   <div class="card-body d-flex justify-content-center">
     <div class="text-center">
-      <mat-label class="text-white">{{ word.word }}</mat-label>
+<!--      <mat-label class="text-white">{{ word.word }}</mat-label>-->
       <div>
         <a type="button" (click)="translateVisible = true" [hidden]="translateVisible">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye"
@@ -12,18 +12,18 @@
           </svg>
         </a>
         <div *ngIf="translateVisible">
-          {{word.translations}}
+<!--          {{word.translations}}-->
         </div>
       </div>
       <div>
         <mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color">
-          <mat-button-toggle value="green" class="fixed-width-button" (click)="updateStatus('learning')">Learn
+          <mat-button-toggle value="green" class="fixed-width-button" (click)="updateStatus('LEARNING')">Learn
           </mat-button-toggle>
-          <mat-button-toggle value="green" class="fixed-width-button" (click)="updateStatus('learned')">Know
+          <mat-button-toggle value="green" class="fixed-width-button" (click)="updateStatus('LEARNED')">Know
           </mat-button-toggle>
         </mat-button-toggle-group>
         <div>
-          <a (click)="updateStatus('ignore')">Don't want to learn this word</a>
+          <a (click)="updateStatus('IGNORE')">Don't want to learn this word</a>
         </div>
       </div>
     </div>

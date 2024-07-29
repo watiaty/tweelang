@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
 import {WordService} from "../_services/word-service.service";
-import {Word} from "../word";
 import {TrainRequest} from "../train-request";
 import {MatSelectChange} from "@angular/material/select";
 import {Language} from "../language";
+import {WordPractice} from "../word-practice";
 
 @Component({
   selector: 'app-train',
@@ -13,7 +13,7 @@ import {Language} from "../language";
 export class TrainComponent {
   rangeValue: number;
   visible: boolean = true;
-  words: Word[] = [];
+  words: WordPractice[] = [];
   id: number = 0;
   langs!: Language[];
   mistakes: number = 0;
@@ -21,17 +21,16 @@ export class TrainComponent {
   inputValue: string = '';
   alertVisible: boolean = false;
   translateVisible: boolean = false;
+  translationsVisible: boolean = false;
+  definitionVisible: boolean = false;
   trainRequest: TrainRequest;
   checked = false;
 
   constructor(private wordService: WordService) {
-    // this.currentUser = this.storageService.getUser();
-    // this.langs = this.currentUser.learningLang;
-    // this.langs.push(Language.EN);
     this.rangeValue = 10;
     this.trainRequest = new TrainRequest();
     // if (this.langs.length > 0) {
-      this.trainRequest.language = Language.EN;
+      this.trainRequest.language = "English";
     // }
   }
 
@@ -68,5 +67,13 @@ export class TrainComponent {
 
   changeLanguage($event: MatSelectChange) {
     this.trainRequest.language = $event.value;
+  }
+
+  toggleDefinition() {
+    this.definitionVisible = !this.definitionVisible;
+  }
+
+  toggleTranslations() {
+    this.translationsVisible = !this.translationsVisible;
   }
 }

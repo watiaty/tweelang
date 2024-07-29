@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {WordService} from "../_services/word-service.service";
-import {WordInfo} from "../word-info";
 import {ActivatedRoute, Router} from "@angular/router";
+import {WordShort} from "../word-short";
 
 @Component({
   selector: 'app-home',
@@ -10,7 +10,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class HomeComponent implements OnInit {
   searchText = new FormControl();
-  words: WordInfo[] = [];
+  words: WordShort[] = [];
 
   constructor(
     private wordService: WordService,

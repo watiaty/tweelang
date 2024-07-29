@@ -13,31 +13,20 @@ import java.util.Optional;
 public class WordServiceImpl implements WordService {
     private final WordRepository wordRepository;
 
-    @Override
-    public List<Word> findAll() {
-        return wordRepository.findAll();
+    public List<Word> findAllByRatingAndLanguage(String languageCode) {
+        return wordRepository.findAllByLanguageOrderByWeightDesc(languageCode);
     }
 
-    public List<Word> findAllByRatingAndLanguage(String language) {
-        return wordRepository.findAllByLanguageOrderByWeightDesc(language);
-    }
-
-    @Override
-    public Word addWord(Word word) {
-        return wordRepository.save(word);
+    public Optional<Word> findWordByNameAndLanguage(String name, String languageCode) {
+        return wordRepository.findByTextAndLanguage_Code(name, languageCode);
     }
 
     @Override
-    public Optional<Word> findWordByNameAndLang(String name, String language) {
-        return wordRepository.findByWordAndLanguage(name, language);
-    }
-
-    @Override
-    public Word findOrCreateWord(String name, String lang) {
-        Optional<Word> existingWordOptional = wordRepository.findFirstByWordAndLanguage(name, lang);
+    public Word findOrCreateWord(String name, String language) {
+        Optional<Word> existingWordOptional = wordRepository.findFirstByTextAndLanguage_Name(name, language);
         return existingWordOptional.orElseGet(() -> wordRepository.save(Word.builder()
-                .word(name)
-                .language(lang)
+                .text(name)
+//                .language(language)
                 .weight(1)
                 .build()));
     }
@@ -48,15 +37,11 @@ public class WordServiceImpl implements WordService {
     }
 
     public List<Word> searchWords(String searchText) {
-        return wordRepository.findAllByWordStartingWith(searchText);
+        return wordRepository.findAllByTextStartingWith(searchText);
     }
 
-    public List<Word> findListByLang(List<Long> ids, String lang) {
-        return wordRepository.findByIdInAndLanguage(ids, lang);
-    }
-
-    public Word findWordExceptListByLang(List<Long> ids, String lang) {
-        return wordRepository.findFirstByIdNotInAndLanguage(ids, lang);
+    public Word findWordExceptListByLanguage(List<Long> ids, String language) {
+        return wordRepository.findFirstByIdNotInAndLanguage_Name(ids, language);
     }
 
     public Word findById(Long id) {

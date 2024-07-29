@@ -4,7 +4,7 @@ databaseChangeLog:
       author: Yauheni Haikou
       changes:
         - addColumn:
-            tableName: word
+            tableName: user_word
             columns:
               - column:
                   name: status

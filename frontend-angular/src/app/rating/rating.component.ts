@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {WordService} from "../_services/word-service.service";
-import {Word} from "../word";
+import {WordShort} from "../word-short";
 
 @Component({
   selector: 'app-rating',
@@ -8,7 +8,7 @@ import {Word} from "../word";
   styleUrl: './rating.component.css'
 })
 export class RatingComponent implements OnInit  {
-  words!: Word[];
+  words!: WordShort[];
   language: string = "en";
   constructor(private wordService: WordService) {
 
@@ -19,7 +19,7 @@ export class RatingComponent implements OnInit  {
   }
 
   getWords() {
-    this.wordService.findAllByRating().subscribe({
+    this.wordService.findAllByRating(this.language).subscribe({
       next: response => {
         this.words = response;
       }

@@ -42,3 +42,30 @@
 .example-result-card .example-value-label {
   font-weight: 600;
 }
+
+.translations {
+  margin-bottom: 20px;
+}
+
+.word-stats {
+  margin-bottom: 20px;
+}
+
+.action-button {
+  text-decoration: none;
+  border-radius: 5px;
+  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.button-content mat-icon {
+  font-size: 20px;
+}

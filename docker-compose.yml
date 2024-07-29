@@ -81,6 +81,8 @@ services:
       POSTGRES_PASSWORD: ijb^A9ooQFK9DTXA6z^p
     ports:
       - "5433:5432"
+    volumes:
+      - users_data:/var/lib/postgresql/data
 
   config-server:
     image: 'config-server:latest'
@@ -104,11 +106,13 @@ services:
     image: 'postgres:alpine3.19'
     container_name: db2
     environment:
-      POSTGRE: S_DB=words
+      POSTGRES_DB: words
       POSTGRES_USER: waitaty
       POSTGRES_PASSWORD: ijb^A9ooQFK9DTXA6z^p
     ports:
       - "5434:5432"
+    volumes:
+      - words_data:/var/lib/postgresql/data
 
   db3:
     image: 'postgres:alpine3.19'
@@ -119,6 +123,8 @@ services:
       POSTGRES_PASSWORD: ijb^A9ooQFK9DTXA6z^p
     ports:
       - "5435:5432"
+    volumes:
+      - user_words_data:/var/lib/postgresql/data
 
   angular-app:
     build:
@@ -126,3 +132,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+
+volumes:
+  words_data:
+    name: words
+  user_words_data:
+    name: user_words
+  users_data:
+    name: users

@@ -2,3 +2,7 @@ databaseChangeLog:
   - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
   - include:
       file: db/changelog/changeset/create-user-word-table.yaml
+  - include:
+      file: db/changelog/changeset/add-status-to-word.yaml
+  - include:
+      file: db/changelog/changeset/update-user-word-table-add-default-repeat-date.yaml

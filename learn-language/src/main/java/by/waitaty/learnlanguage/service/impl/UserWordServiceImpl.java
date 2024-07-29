@@ -41,4 +41,8 @@ public class UserWordServiceImpl implements UserWordService {
     public Optional<UserWord> findByIdWordAndIdUser(Long wordId, Long userId) {
         return userWordRepository.findByIdWordAndIdUser(wordId, userId);
     }
+
+    public boolean existsByIdUserAndIdWord(Long userId, Long wordId) {
+        return userWordRepository.existsByIdUserAndIdWord(userId, wordId);
+    }
 }

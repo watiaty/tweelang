@@ -1,10 +1,10 @@
 <div class="card my-5">
   <div class="card-body d-flex justify-content-center">
     <form (ngSubmit)="onSubmit()" #userForm="ngForm" class="mx-auto" style="width: 70%">
-      <mat-form-field style="width: 100%">
-        <mat-label>Word</mat-label>
-        <input matInput placeholder="Введите слово" [(ngModel)]="word.word" name="word" required>
-      </mat-form-field>
+<!--      <mat-form-field style="width: 100%">-->
+<!--        <mat-label>Word</mat-label>-->
+<!--        <input matInput placeholder="Введите слово" [(ngModel)]="word.word" name="word" required>-->
+<!--      </mat-form-field>-->
       <mat-form-field style="width: 100%">
         <mat-label>Language</mat-label>
         <mat-select [(value)]="word.language" (selectionChange)="changeLanguage($event)">
@@ -14,10 +14,10 @@
       <mat-form-field style="width: 100%">
         <mat-label>Translations</mat-label>
         <mat-chip-grid #chipGrid aria-label="Enter fruits">
-            <mat-chip *ngFor="let translation of word.translations" (removed)="remove(translation)">
-              {{ translation }}
-              <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
+<!--            <mat-chip *ngFor="let translation of word.translations" (removed)="remove(translation)">-->
+<!--              {{ translation }}-->
+<!--              <mat-icon matChipRemove>cancel</mat-icon>-->
+<!--            </mat-chip>-->
           <input placeholder="New translation..."
                  [matChipInputFor]="chipGrid"
                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"

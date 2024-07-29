@@ -4,6 +4,27 @@ databaseChangeLog:
       author: Yauheni Haikou
       changes:
         - createTable:
+            tableName: language
+            columns:
+              - column:
+                  name: language_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+
+        - createTable:
             tableName: word
             columns:
               - column:
@@ -14,18 +35,98 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: word
-                  type: VARCHAR(255)
+                  name: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
-                  name: language
-                  type: VARCHAR(2)
+                  name: language_id
+                  type: bigint
                   constraints:
                     nullable: false
+              - column:
+                  name: weight
+                  type: int
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: word
+            columnNames: text, language_id
+            constraintName: unique_text_language
+
+        - addForeignKeyConstraint:
+            baseTableName: word
+            baseColumnNames: language_id
+            constraintName: fk_word_language
+            referencedTableName: language
+            referencedColumnNames: language_id
+
+        - createTable:
+            tableName: transcription
+            columns:
+              - column:
+                  name: transcription_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transcription
+                  type: varchar(100)
+              - column:
+                  name: transcription_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: transcription
+            baseColumnNames: word_id
+            constraintName: fk_transcription_word
+            referencedTableName: word
+            referencedColumnNames: word_id
+
+        - createTable:
+            tableName: word_usage
+            columns:
+              - column:
+                  name: usage_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: word_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: part_of_speech
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: level
+                  type: varchar(10)
               - column:
                   name: definition
-                  type: VARCHAR(255)
+                  type: text
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: word_usage
+            baseColumnNames: word_id
+            constraintName: fk_word_usage_word
+            referencedTableName: word
+            referencedColumnNames: word_id
+
         - createTable:
             tableName: translation
             columns:
@@ -37,57 +138,38 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: word_id
+                  name: usage_id
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_translations_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
               - column:
-                  name: translated_word_id
+                  name: translation
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: language_id
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_translations_translated_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
+        - addForeignKeyConstraint:
+            baseTableName: translation
+            baseColumnNames: usage_id
+            constraintName: fk_translation_usage
+            referencedTableName: word_usage
+            referencedColumnNames: usage_id
+        - addForeignKeyConstraint:
+            baseTableName: translation
+            baseColumnNames: language_id
+            constraintName: fk_translation_language
+            referencedTableName: language
+            referencedColumnNames: language_id
+
         - createTable:
-            tableName: word_form
+            tableName: relation
             columns:
               - column:
-                  name: word_form_id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: main_word_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_word_forms_main_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
-              - column:
-                  name: derived_word_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_word_forms_derived_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
-              - column:
-                  name: relationship_type
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-        - createTable:
-            tableName: synonym
-            columns:
-              - column:
-                  name: synonym_id
+                  name: relation_id
                   type: bigint
                   autoIncrement: true
                   constraints:
@@ -98,40 +180,25 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_synonyms_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
               - column:
-                  name: synonym_word_id
+                  name: related_word_id
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_synonyms_synonym_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
-        - createTable:
-            tableName: antonym
-            columns:
               - column:
-                  name: antonym_id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: word_id
-                  type: bigint
+                  name: relation_type
+                  type: varchar(50)
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_antonyms_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
-              - column:
-                  name: antonym_word_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_antonyms_antonym_word
-                    referencedTableName: word
-                    referencedColumnNames: word_id
+        - addForeignKeyConstraint:
+            baseTableName: relation
+            baseColumnNames: word_id
+            constraintName: fk_relation_word
+            referencedTableName: word
+            referencedColumnNames: word_id
+        - addForeignKeyConstraint:
+            baseTableName: relation
+            baseColumnNames: related_word_id
+            constraintName: fk_relation_related_word
+            referencedTableName: word
+            referencedColumnNames: word_id

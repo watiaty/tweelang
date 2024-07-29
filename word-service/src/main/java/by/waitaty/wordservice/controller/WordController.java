@@ -2,17 +2,17 @@ package by.waitaty.wordservice.controller;
 
 import by.waitaty.wordservice.dto.GetUserWordsRequest;
 import by.waitaty.wordservice.dto.Mapper;
+import by.waitaty.wordservice.dto.ShortWordDtoResponse;
 import by.waitaty.wordservice.dto.WordDtoResponse;
-import by.waitaty.wordservice.dto.WordInfoDtoResponse;
+import by.waitaty.wordservice.dto.WordUsageDtoResponse;
 import by.waitaty.wordservice.dto.WordWithTranslationsDto;
 import by.waitaty.wordservice.exception.UnsupportedFileException;
 import by.waitaty.wordservice.exception.WordNotFoundException;
+import by.waitaty.wordservice.model.Translation;
 import by.waitaty.wordservice.model.Word;
-import by.waitaty.wordservice.service.AntonymServiceImpl;
-import by.waitaty.wordservice.service.SynonymServiceImpl;
-import by.waitaty.wordservice.service.TranslationServiceImpl;
-import by.waitaty.wordservice.service.WordFormServiceImpl;
+import by.waitaty.wordservice.model.WordUsage;
 import by.waitaty.wordservice.service.WordServiceImpl;
+import by.waitaty.wordservice.service.WordUsageServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,10 +36,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class WordController {
     private final WordServiceImpl wordService;
-    private final TranslationServiceImpl translationService;
-    private final AntonymServiceImpl antonymService;
-    private final SynonymServiceImpl synonymService;
-    private final WordFormServiceImpl wordFormService;
+    private final WordUsageServiceImpl wordUsageService;
+
     private Mapper mapper;
 
     @GetMapping("/findById")
@@ -50,46 +47,50 @@ public class WordController {
 
     @GetMapping(path = "/all")
     public List<WordDtoResponse> getAll() {
-        return wordService.findAll().stream()
-                .map(mapper::wordToWordDtoResponse)
-                .toList();
+        return null;
+//                wordService.findAll().stream()
+//                .map(mapper::wordToWordDtoResponse)
+//                .toList();
     }
 
-    @GetMapping(path = "/rating/{language}")
-    public List<WordDtoResponse> getAllByRating(@PathVariable String language) {
-        return wordService.findAllByRatingAndLanguage(language).stream()
-                .map(mapper::wordToWordDtoResponse)
+    @GetMapping(path = "/rating/{languageCode}")
+    public List<ShortWordDtoResponse> getAllByRating(@PathVariable String languageCode) {
+        return wordService.findAllByRatingAndLanguage(languageCode)
+                .stream()
+                .map(mapper::wordToShortWordDtoResponse)
                 .toList();
     }
 
     @GetMapping(path = "/list")
     public List<WordDtoResponse> getByIds(@RequestBody GetUserWordsRequest request) {
-        return wordService.findListByLang(request.getIds(), request.getLanguage()).stream()
-                .map(mapper::wordToWordDtoResponse)
-                .peek(wordDtoResponse -> wordDtoResponse.setTranslations(translationService.findAllById(wordDtoResponse.getId())))
+        System.out.println(request.getIds());
+        return wordUsageService.findListByIdsAndLanguage(request.getIds(), request.getLanguage())
+                .stream()
+                .map(mapper::wordUsageToWordDtoResponse)
                 .toList();
     }
 
     @GetMapping(path = "/exclude")
     public WordDtoResponse findWordExcludingIdsByLanguage(@RequestBody GetUserWordsRequest request) {
-        Word word = wordService.findWordExceptListByLang(request.getIds(), request.getLanguage());
+        Word word = wordService.findWordExceptListByLanguage(request.getIds(), request.getLanguage());
         return WordDtoResponse.builder()
-                .word(word.getWord())
-                .id(word.getId())
-                .translations(translationService.findAllById(word.getId()))
+                .word(word.getText())
+//                .id(word.getId())
+//                .translations(translationService.findAllById(word.getId()))
                 .build();
     }
 
     @GetMapping("/search")
-    public List<WordInfoDtoResponse> search(@RequestParam("q") String searchText) {
-        return wordService.searchWords(searchText).stream()
-                .map(word -> WordInfoDtoResponse.builder()
-                        .id(word.getId().toString())
-                        .word(word.getWord())
-                        .language(word.getLanguage())
-                        .translations(translationService.findAllByWord(word))
+    public List<ShortWordDtoResponse> search(@RequestParam("q") String searchText) {
+        List<Word> words = wordService.searchWords(searchText);
+        return words.stream()
+                .map(word -> ShortWordDtoResponse.builder()
+                        .id(word.getId())
+                        .text(word.getText())
+                        .language(word.getLanguage().getCode())
+                        .weight(word.getWeight())
                         .build())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/find")
@@ -99,17 +100,32 @@ public class WordController {
 
     @GetMapping("/{language}/{stringWord}")
     public WordWithTranslationsDto findByWordAndLang(@PathVariable String language, @PathVariable String stringWord) {
-        var word = wordService.findWordByNameAndLang(stringWord, language).orElseThrow(() -> new WordNotFoundException(stringWord, language));
+        Word word = wordService.findWordByNameAndLanguage(stringWord, language)
+                .orElseThrow(() -> new WordNotFoundException(stringWord, language));
+
+        List<WordUsageDtoResponse> wordUsageDtoResponses = word.getUsages().stream()
+                .map(this::convertToWordUsageDtoResponse)
+                .collect(Collectors.toList());
+
         return WordWithTranslationsDto.builder()
                 .id(word.getId())
-                .word(word.getWord())
-                .language(word.getLanguage())
-                .definition(word.getDefinition())
-                .antonyms(antonymService.getAllAntonyms(word))
-                .synonyms(synonymService.getAllByWord(word))
-                .derived(wordFormService.getAllByMainWord(word))
-                .mainWord(wordFormService.getMainWord(word))
-                .translations(translationService.findAllByWord(word))
+                .text(word.getText())
+                .language(word.getLanguage().getCode())
+                .transcriptions(word.getTranscriptions())
+                .wordUsages(wordUsageDtoResponses)
+                .synonyms(word.getRelations().stream().filter(relation -> relation.getType().equals("synonym")).map(relation -> ShortWordDtoResponse.builder()
+                        .text(relation.getRelatedWord().getText())
+                        .weight(relation.getRelatedWord().getWeight())
+                        .build()).collect(Collectors.toList()))
+                .antonyms(word.getRelations().stream().filter(relation -> relation.getType().equals("antonym")).map(relation -> ShortWordDtoResponse.builder()
+                        .text(relation.getRelatedWord().getText())
+                        .weight(relation.getRelatedWord().getWeight())
+                        .build()).collect(Collectors.toList()))
+                .formedBy(word.getRelations().stream().filter(relation -> relation.getType().equals("primary")).findFirst().map(relation -> ShortWordDtoResponse.builder()
+                        .text(relation.getRelatedWord().getText())
+                        .weight(relation.getRelatedWord().getWeight())
+                        .build()).orElse(null))
+                .weight(word.getWeight())
                 .build();
     }
 
@@ -130,12 +146,28 @@ public class WordController {
                     .collect(Collectors.joining(" "));
 
             String[] words = content.split("\\s+");
-            for (var word: words) {
-                var id = wordService.findOrCreateWord(word, "EN").getId();
+            for (var word : words) {
+                var id = 1L;
+//                var id = wordService.findOrCreateWord(word, "EN").getId();
                 wordService.increaseWeight(id);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private WordUsageDtoResponse convertToWordUsageDtoResponse(WordUsage wordUsage) {
+        List<String> translations = wordUsage.getTranslations().stream()
+                .filter(translation -> Objects.equals(translation.getLanguage().getCode(), "ru"))
+                .map(Translation::getTranslation)
+                .collect(Collectors.toList());
+
+        return WordUsageDtoResponse.builder()
+                .id(wordUsage.getId())
+                .translations(translations)
+                .partOfSpeech(wordUsage.getPartOfSpeech())
+                .level(wordUsage.getLevel())
+                .definition(wordUsage.getDefinition())
+                .build();
     }
 }

@@ -4,8 +4,11 @@
       <div class="row align-items-start">
         <h1>
           <img src="assets/flags/{{wordLang}}.jpg" alt="language" style="width: 20px">
-          {{ word.word }}
-          <a mat-button (click)="playWord(word.word)">
+          {{ word.text }}
+          <span *ngIf="word.formedBy">
+            <a [routerLink]="['/word', wordLang, word.formedBy.text]" (click)="getWord(word.formedBy.text, wordLang)">{{ word.formedBy.text }}</a>
+          </span>
+          <a mat-button (click)="playWord(word.text)">
             <mat-icon>volume_up</mat-icon>
           </a>
           <a mat-button (click)="delete(word.id)">
@@ -13,61 +16,49 @@
           </a>
         </h1>
         <p>
-          {{ word.definition }}
-          <button mat-icon-button (click)="toggleInput()" *ngIf="!showInput">
-            <mat-icon>edit</mat-icon>
-          </button>
+          <ng-container *ngFor="let transcription of word.transcriptions; let last = last">
+            <b>{{ transcription.type }}</b> {{ transcription.transcription }} <span *ngIf="!last">|&nbsp;</span>
+          </ng-container>
         </p>
         <div class="col">
-          <div>
-            <h2>Translations
-              <button mat-icon-button (click)="toggleInput()" *ngIf="!showInput">
+          <div class="word-usages">
+            <ng-container *ngFor="let wordUsage of word.wordUsages">
+              <p>({{ wordUsage.partOfSpeech }}) {{ wordUsage.level }}
+              <a mat-button (click)="learnWord(wordUsage.id)">
                 <mat-icon>add</mat-icon>
-              </button>
-              <ng-container *ngIf="showInput">
-                <mat-form-field appearance="fill">
-                  <input matInput placeholder="Введите слово" [(ngModel)]="newItem">
-                </mat-form-field>
-                <button mat-button (click)="addTranslation()">Add</button>
-              </ng-container>
-            </h2>
+              </a>
+              </p>
+              <p>{{ wordUsage.definition }}</p>
+              <p>
+                <ng-container *ngFor="let translation of wordUsage.translations; let last = last">
+                  {{ translation }} <span *ngIf="!last">,&nbsp;</span>
+                </ng-container>
+              </p>
+              <hr>
+            </ng-container>
           </div>
-          <ng-container *ngFor="let translation of word.translations">
-            <p>{{ translation.translation }}&nbsp; <button mat-button (click)="deleteTranslation(translation.id)">delete</button> </p>
-          </ng-container>
         </div>
       </div>
     </div>
-    <div class="container">
+    <div class="container" *ngIf="word.antonyms && word.antonyms.length">
       <div class="row align-items-start">
         <div class="col">
-          <tr>Antonyms</tr>
-          <ng-container *ngFor="let antonym of word.antonyms">
-            <a (click)="routeAnotherWord(antonym, 'EN')">{{ antonym }}&nbsp;</a>
+          Antonyms:
+          <ng-container *ngFor="let antonym of word.antonyms; let last = last">
+            <a [routerLink]="['/word', wordLang, antonym.text]" (click)="getWord(antonym.text, wordLang)">{{ antonym.text }}</a><span *ngIf="!last">,&nbsp;</span>
           </ng-container>
         </div>
       </div>
     </div>
-    <div class="container">
+    <div class="container" *ngIf="word.synonyms && word.synonyms.length">
       <div class="row align-items-start">
         <div class="col">
-          <tr>Synonyms</tr>
-          <ng-container *ngFor="let synonym of word.synonyms">
-            <a [routerLink]="['/word']" [queryParams]="{ data: synonym, lang: 'EN' }">{{ synonym }}&nbsp;</a>
+          Synonyms:
+          <ng-container *ngFor="let synonym of word.synonyms; let last = last">
+            <a [routerLink]="['/word', wordLang, synonym.text]" (click)="getWord(synonym.text, wordLang)">{{ synonym.text }}</a><span *ngIf="!last">,&nbsp;</span>
           </ng-container>
         </div>
       </div>
     </div>
-    <div class="container">
-      <div class="row align-items-start">
-        <div class="col">
-          <tr>Derived words</tr>
-          <ng-container *ngFor="let derive of word.derived">
-            <a [routerLink]="['/word', wordLang, derive]" (click)="getWord(derive, wordLang)">{{ derive }}</a>
-          </ng-container>
-        </div>
-      </div>
-    </div>
-    <a [routerLink]="['/word', wordLang, word.mainWord]" (click)="getWord(word.mainWord, wordLang)">{{ word.mainWord }}</a>
   </div>
 </div>

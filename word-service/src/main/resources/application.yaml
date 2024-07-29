@@ -2,13 +2,13 @@ spring:
   application:
     name: word-service
   config:
-    import: configserver:http://localhost:8088
+    import: optional:configserver:http://host.docker.internal:8088
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/words
-    username: postgres
-    password: root
+    url: jdbc:postgresql://host.docker.internal:5434/words
+    username: waitaty
+    password: ijb^A9ooQFK9DTXA6z^p
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -21,7 +21,7 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: http://localhost:9000
+          issuer-uri: http://192.168.0.11:9000
 
 ---
 

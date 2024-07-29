@@ -3,16 +3,15 @@ import {WordService} from "../_services/word-service.service";
 import {MatSelectChange} from "@angular/material/select";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
-import {StorageService} from "../_services/storage.service";
-import {WordInfo} from "../word-info";
-import {Language, LanguageHelper} from "../language";
+import {Language} from "../language";
+import {WordWithTranslations} from "../word-with-translations";
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './word-list.component.html'
 })
 export class WordListComponent implements OnInit {
-  words: WordInfo[] = [];
+  words: WordWithTranslations[] = [];
   selectedLang!: Language;
   selectedStatus!: boolean;
   langs: Language[] = [];
@@ -23,8 +22,8 @@ export class WordListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private wordService: WordService) {
-    this.langs.push(Language.EN);
-    this.langs.push(Language.PL);
+    // this.langs.push(Language.EN);
+    // this.langs.push(Language.PL);
     this.selectedLang = this.langs[0];
   }
 
@@ -64,7 +63,7 @@ export class WordListComponent implements OnInit {
   }
 
   loadWords() {
-    this.wordService.findUserWords("EN").subscribe(response => {
+    this.wordService.findUserWords("en").subscribe(response => {
       this.words = response;
       this.updateDataSource();
     });

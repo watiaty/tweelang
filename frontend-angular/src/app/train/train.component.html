@@ -7,7 +7,7 @@
         <label class="example-value-label">{{slider.value}}</label>
       </div>
       <mat-slider max="100" min="10" step="1" [disabled]="checked">
-        <input matSliderThumb  [(ngModel)]="trainRequest.quantity" #slider="ngModel">
+        <input matSliderThumb [(ngModel)]="trainRequest.quantity" #slider="ngModel">
       </mat-slider>
       <section>
         <mat-checkbox [(ngModel)]="checked">All</mat-checkbox>
@@ -22,21 +22,46 @@
     </ng-container>
     <ng-container *ngIf="!visible">
       <div class="d-flex justify-content-between align-items-center">
-        <label class="text-white">{{ id }} / {{ words.length }}</label>
+        <div>
+          <div class="container">
+            <div class="button-wrapper">
+              <a type="button" (click)="toggleTranslations()" class="action-button">
+                <p class="button-content">
+                  <mat-icon>{{ translationsVisible ? 'visibility' : 'visibility_off' }}</mat-icon>
+                  <label>translations</label>
+                </p>
+              </a>
+            </div>
+            <div class="button-wrapper">
+              <a type="button" (click)="toggleDefinition()" class="action-button">
+                <p class="button-content">
+                  <mat-icon>{{ definitionVisible ? 'visibility' : 'visibility_off' }}</mat-icon>
+                  <label>definition</label>
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
         <div>
           <label class="text-danger">Mistakes: {{ mistakes }}</label>
           <label class="text-success">Streak: {{ streak }}</label>
         </div>
       </div>
       <div class="text-center">
-        <mat-label class="text-white">{{ words[id].translations }}</mat-label>
+        <label class="text-white word-stats">{{ id }} / {{ words.length }}</label>
+        <div class="translations" [hidden]="translationsVisible">
+          <mat-label class="text-white">{{ words[id].translations }}</mat-label>
+        </div>
+        <div class="definition" [hidden]="definitionVisible">
+          <mat-label class="text-white">{{ words[id].definition }}</mat-label>
+        </div>
         <div>
           <mat-form-field class="custom-mat-form-field mt-4">
             <input matInput [(ngModel)]="inputValue" (keyup.enter)="onInputKeyUp()">
           </mat-form-field>
         </div>
         <div *ngIf="alertVisible" class="alert alert-warning mx-auto d-block mt-3" role="alert" style="width: 300px;">
-          Не верно
+          Wrong
           <a type="button" (click)="translateVisible = true" [hidden]="translateVisible">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye"
                  viewBox="0 0 16 16">
@@ -46,7 +71,7 @@
             </svg>
           </a>
           <div *ngIf="translateVisible">
-            {{words[id].word}}
+            {{ words[id].word }}
           </div>
         </div>
       </div>

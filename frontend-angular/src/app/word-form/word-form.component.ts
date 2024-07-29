@@ -25,15 +25,13 @@ export class WordFormComponent implements OnInit {
 
   constructor(private router: Router, private wordService: WordService) {
     this.word = new Word();
-    this.langs.push(Language.EN);
-    this.langs.push(Language.PL);
     if (this.langs.length > 0) {
-      this.word.language = Language.EN;
+      this.word.language = "en";
     }
   }
 
   ngOnInit(): void {
-    this.word.translations = [];
+    // this.word.translations = [];
   }
 
   onSubmit() {
@@ -59,17 +57,17 @@ export class WordFormComponent implements OnInit {
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
-      this.word.translations.push(value);
+      // this.word.translations.push(value);
     }
     event.chipInput!.clear();
   }
 
   remove(translation: String): void {
-    const index = this.word.translations.indexOf(translation);
-    if (index >= 0) {
-      this.word.translations.splice(index, 1);
-      this.announcer.announce(`Removed ${translation}`);
-    }
+    // const index = this.word.translations.indexOf(translation);
+    // if (index >= 0) {
+    //   this.word.translations.splice(index, 1);
+    //   this.announcer.announce(`Removed ${translation}`);
+    // }
   }
 
   changeLanguage($event: MatSelectChange) {

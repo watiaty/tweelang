@@ -28,4 +28,6 @@ public interface UserWordRepository extends JpaRepository<UserWord, Long> {
     Optional<UserWord> findByIdWordAndIdUser(Long word, Long userId);
 
     void deleteByIdWordAndIdUser(Long id, Long userId);
+
+    boolean existsByIdUserAndIdWord(Long idUser, Long idWord);
 }

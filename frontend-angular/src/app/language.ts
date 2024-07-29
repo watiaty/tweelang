@@ -1,56 +1,11 @@
-export enum Language {
-  RU = "Russian",
-  PL = "Polish",
-  EN = "English",
-  AR = "Arabic",
-  BE = "Belarusian",
-  BG = "Bulgarian",
-  CS = "Czech",
-  CY = "Welsh",
-  DA = "Danish",
-  DE = "German",
-  EL = "Greek",
-  EO = "Esperanto",
-  ES = "Spanish",
-  ET = "Estonian",
-  FI = "Finnish",
-  FR = "French",
-  GA = "Irish",
-  GD = "Scottish",
-  HU = "Hungarian",
-  HY = "Armenian",
-  ID = "Indonesian",
-  IS = "Icelandic",
-  IT = "Italian",
-  JA = "Japanese",
-  KO = "Korean",
-  LT = "Lithuanian",
-  LV = "Latvian",
-  MK = "Macedonian",
-  MN = "Mongolian",
-  MO = "Moldavian",
-  NE = "Nepali",
-  NL = "Dutch",
-  NN = "Norwegian",
-  PT = "Portuguese",
-  RO = "Romanian",
-  SK = "Slovak",
-  SL = "Slovenian",
-  SQ = "Albanian",
-  SR = "Serbian",
-  SV = "Swedish",
-  TH = "Thai",
-  TR = "Turkish",
-  UK = "Ukrainian",
-  VI = "Vietnamese",
-  YI = "Yiddish",
-  ZH = "Chinese"
-}
+export class Language {
+  id: String;
+  code: String;
+  name: Language;
 
-export class LanguageHelper {
-  static getLanguageFromCode(code: string): Language {
-    return Object.values(Language).find(
-      lang => lang.toLowerCase() === code.toLowerCase()
-    ) as Language | Language.EN;
+  constructor(id: String, code: String, name: Language) {
+    this.id = id;
+    this.code = code;
+    this.name = name;
   }
 }

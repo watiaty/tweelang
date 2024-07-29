@@ -1,18 +1,18 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Word} from "../word";
 import {WordService} from "../_services/word-service.service";
-import {Language} from "../language";
 
 @Component({
   selector: 'app-word-new',
   templateUrl: './word-new.component.html',
   styleUrl: './word-new.component.css'
 })
-export class WordNewComponent {
+export class WordNewComponent implements OnInit {
   word!: Word;
   translateVisible: boolean = false;
 
-  constructor(private wordService: WordService) {}
+  constructor(private wordService: WordService) {
+  }
 
   ngOnInit() {
     this.loadWord();
@@ -24,8 +24,14 @@ export class WordNewComponent {
     });
   }
 
-  updateStatus(learned: string) {
-    this.loadWord();
-    this.translateVisible = false;
+  updateStatus(status: string) {
+    const req = {
+      id: this.word.id,
+      status: status
+    };
+    this.wordService.addUserWordByIdAndStatus(req).subscribe(() => {
+      this.translateVisible = false;
+      this.loadWord();
+    });
   }
 }

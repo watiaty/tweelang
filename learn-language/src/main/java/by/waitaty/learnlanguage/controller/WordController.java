@@ -1,8 +1,8 @@
 package by.waitaty.learnlanguage.controller;
 
 import by.waitaty.learnlanguage.client.WordClient;
+import by.waitaty.learnlanguage.config.WebClientConfig;
 import by.waitaty.learnlanguage.dto.Mapper;
-import by.waitaty.learnlanguage.dto.TranslationDto;
 import by.waitaty.learnlanguage.dto.WordDtoResponse;
 import by.waitaty.learnlanguage.dto.request.AddNewTranslationRequest;
 import by.waitaty.learnlanguage.dto.request.AddUserWordDtoRequest;
@@ -13,12 +13,11 @@ import by.waitaty.learnlanguage.dto.response.UserWordDtoResponse;
 import by.waitaty.learnlanguage.entity.Language;
 import by.waitaty.learnlanguage.entity.UserWord;
 import by.waitaty.learnlanguage.entity.Word;
-import by.waitaty.learnlanguage.entity.WordStatus;
 import by.waitaty.learnlanguage.service.impl.UserWordServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancedExchangeFilterFunction;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -33,9 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -51,13 +48,13 @@ import java.util.stream.Collectors;
 public class WordController {
     private final UserWordServiceImpl userWordService;
     private Mapper mapper;
-    private LoadBalancedExchangeFilterFunction filterFunction;
+    private WebClientConfig webClient;
 
-    @GetMapping(path = "/{lang}")
+    @GetMapping(path = "/{language}")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
     public List<WordDtoResponse> getAll(
-            @PathVariable Language lang,
+            @PathVariable String language,
             @AuthenticationPrincipal Jwt jwt,
             @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
         Long userId = jwt.getClaim("userId");
@@ -65,11 +62,11 @@ public class WordController {
                 .map(UserWord::getIdWord)
                 .toList();
 
-        WordClient wordClient = getWordClient(authorizedClient);
+        WordClient wordClient = webClient.wordClient(authorizedClient);
 
         return wordClient.getByIds(GetUserWordsRequest.builder()
                 .ids(idList)
-                .language(lang.name())
+                .language(language)
                 .build());
     }
 
@@ -85,7 +82,7 @@ public class WordController {
                 .map(UserWord::getIdWord)
                 .toList();
 
-        WordClient wordClient = getWordClient(authorizedClient);
+        WordClient wordClient = webClient.wordClient(authorizedClient);
 
         return wordClient.findWordExcludingIdsByLanguage(GetUserWordsRequest.builder()
                 .ids(idList)
@@ -96,24 +93,24 @@ public class WordController {
     @PostMapping(path = "/practice")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
-    public List<UserWordDtoResponse> getWordsForTraining(
+    public List<WordDtoResponse> getWordsForTraining(
             @RequestBody WordTrainDtoRequest wordTrainDtoRequest,
             @AuthenticationPrincipal Jwt jwt,
             @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
         Long userId = jwt.getClaim("userId");
         List<Long> wordIds = getLearningWordIds(wordTrainDtoRequest.getQuantity(), userId);
+        List<WordDtoResponse> wordDtoResponses = fetchWordsFromService(wordIds, authorizedClient);
 
-        List<UserWordDtoResponse> userWordDtoResponses = fetchWordsFromService(wordIds, authorizedClient);
+        Collections.shuffle(wordDtoResponses);
 
-        Collections.shuffle(userWordDtoResponses);
-
-        return userWordDtoResponses;
+        return wordDtoResponses;
     }
 
     /**
      * Retrieves a list of word IDs for learning.
+     *
      * @param quantity the number of words to retrieve
-     * @param userId the ID of the user
+     * @param userId   the ID of the user
      * @return a list of word IDs
      */
     private List<Long> getLearningWordIds(int quantity, Long userId) {
@@ -125,22 +122,17 @@ public class WordController {
 
     /**
      * Fetches words from an external service.
-     * @param wordIds the list of word IDs
+     *
+     * @param wordIds          the list of word IDs
      * @param authorizedClient the authorized client for interacting with the service
      * @return a list of user word DTO responses
      */
-    private List<UserWordDtoResponse> fetchWordsFromService(List<Long> wordIds, OAuth2AuthorizedClient authorizedClient) {
-        WordClient wordClient = getWordClient(authorizedClient);
+    private List<WordDtoResponse> fetchWordsFromService(List<Long> wordIds, OAuth2AuthorizedClient authorizedClient) {
+        WordClient wordClient = webClient.wordClient(authorizedClient);
         return wordClient.getByIds(GetUserWordsRequest.builder()
-                        .ids(wordIds)
-                        .language("EN")
-                        .build())
-                .stream()
-                .map(wordDtoResponse -> new UserWordDtoResponse(
-                        wordDtoResponse.getId(),
-                        wordDtoResponse.getWord(),
-                        wordDtoResponse.getTranslations().stream().map(TranslationDto::getTranslation).collect(Collectors.toList())))
-                .collect(Collectors.toList());
+                .ids(wordIds)
+                .language("en")
+                .build());
     }
 
     @PatchMapping("/update/{id}")
@@ -177,7 +169,7 @@ public class WordController {
             @AuthenticationPrincipal Jwt jwt,
             @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
         Long userId = jwt.getClaim("userId");
-        WordClient wordClient = getWordClient(authorizedClient);
+        WordClient wordClient = webClient.wordClient(authorizedClient);
         Word word = wordClient.findOrCreate(addWordRequest.getWord(), Language.getLanguageFromString(addWordRequest.getLanguage()).name());
         UserWord userWord = createUserWord(userId, word, addWordRequest.getTranslations(), wordClient);
         UserWord savedUserWord = userWordService.update(userWord);
@@ -191,10 +183,17 @@ public class WordController {
             @RequestBody AddUserWordDtoRequest addWordRequest,
             @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
+        Long wordId = addWordRequest.getId();
+
+        if (userWordService.existsByIdUserAndIdWord(userId, wordId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Word already added");
+        }
+
         userWordService.update(UserWord.builder()
-                        .idUser(userId)
-                        .idWord(addWordRequest.getId())
-                        .status(addWordRequest.getStatus())
+                .idUser(userId)
+                .idWord(wordId)
+                .repeatStage(1)
+                .status(addWordRequest.getStatus())
                 .build());
     }
 
@@ -205,7 +204,7 @@ public class WordController {
             @AuthenticationPrincipal Jwt jwt,
             @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
         Long userId = jwt.getClaim("userId");
-        WordClient wordClient = getWordClient(authorizedClient);
+        WordClient wordClient = webClient.wordClient(authorizedClient);
         String csvFile = "D:\\Java\\Projects\\tweelang\\learn-language\\src\\main\\resources\\words.csv";
         String line;
         String cvsSplitBy = ",";
@@ -228,6 +227,10 @@ public class WordController {
         }
     }
 
+    public boolean wordExistsForUser(Long userId, Long wordId) {
+        return userWordService.existsByIdUserAndIdWord(userId, wordId);
+    }
+
     private UserWord createUserWord(Long userId, Word word, String[] translations, WordClient wordClient) {
         UserWord userWord = userWordService.getUserWordByWord(word.getId(), userId)
                 .orElseGet(() -> UserWord.builder()
@@ -245,18 +248,5 @@ public class WordController {
         );
 
         return userWord;
-    }
-
-    public WordClient getWordClient(OAuth2AuthorizedClient authorizedClient) {
-        WebClient webClient = WebClient.builder()
-                .baseUrl("http://word-service")
-                .filter(filterFunction)
-                .defaultHeaders((headers) -> headers.setBearerAuth(authorizedClient.getAccessToken().getTokenValue()))
-                .build();
-
-        HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient))
-                .build();
-        return httpServiceProxyFactory.createClient(WordClient.class);
     }
 }

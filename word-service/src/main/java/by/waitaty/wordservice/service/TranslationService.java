@@ -1,14 +1,10 @@
 package by.waitaty.wordservice.service;
 
-import by.waitaty.wordservice.dto.TranslationDto;
+import by.waitaty.wordservice.model.Language;
 import by.waitaty.wordservice.model.Word;
 
-import java.util.List;
-
 public interface TranslationService {
-    void addWordTranslation(Word translation, Word word);
-
     void delete(Long id);
 
-    List<TranslationDto> findAllByWord(Word word);
+    void addWordTranslation(Word word, String translation, Language language);
 }

@@ -3,8 +3,10 @@ import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
 import {Observable} from "rxjs";
 import {Word} from "../word";
 import {environment} from "../../environments/environment";
-import {WordInfo} from "../word-info";
 import {TrainRequest} from "../train-request";
+import {WordShort} from "../word-short";
+import {WordWithTranslations} from "../word-with-translations";
+import {WordPractice} from "../word-practice";
 
 
 const URLS = `${environment.wordUrl}`;
@@ -20,20 +22,20 @@ export class WordService {
 
   }
 
-  public findUserWords(selectedLang: any): Observable<WordInfo[]> {
-    return this.http.get<WordInfo[]>(URLSw + '/' + selectedLang);
+  public findUserWords(selectedLang: any): Observable<WordWithTranslations[]> {
+    return this.http.get<WordWithTranslations[]>(URLSw + '/' + selectedLang);
   }
 
-  public findWordsForTraining(trainRequest: TrainRequest): Observable<Word[]> {
-    return this.http.post<Word[]>(URLSw + '/practice', trainRequest);
+  public findWordsForTraining(trainRequest: TrainRequest): Observable<WordPractice[]> {
+    return this.http.post<WordPractice[]>(URLSw + '/practice', trainRequest);
   }
 
   public findAll(): Observable<Word[]> {
     return this.http.get<Word[]>(URLS + '/all');
   }
 
-  public findAllByRating(): Observable<Word[]> {
-    return this.http.get<Word[]>(URLS + '/rating' + '/EN');
+  public findAllByRating(languageCode: String): Observable<Word[]> {
+    return this.http.get<Word[]>(URLS + '/rating/' + languageCode);
   }
 
   public save(word: Word): Observable<any> {
@@ -49,26 +51,30 @@ export class WordService {
   }
 
   findWord(wordName: String, wordLang: String) {
-    return this.http.get<WordInfo>(URLS + '/' + wordLang + "/" + wordName);
+    return this.http.get<Word>(URLS + '/' + wordLang + "/" + wordName);
   }
 
   searchWords(searchText: String) {
-    return this.http.get<WordInfo[]>(URLS + '/search?q=' + searchText);
+    return this.http.get<WordShort[]>(URLS + '/search?q=' + searchText);
   }
 
-  addTranslationAndWord(id: String, translations: String[], language: String) {
+  addTranslationAndWord(id: number, translations: String[], language: String) {
     return this.http.post<Word>(TRANSLATION_URL + '/add', {id, translations, language});
+  }
+
+  addUserWordByIdAndStatus(req: { id: number, status: string }) {
+    return this.http.post(URLSw + '/add-new-word', req);
   }
 
   deleteUserWord(id: String) {
     return this.http.delete<Word>(URLSw + '/delete/' + id);
   }
 
-  updateStatus(id: string, status: string) {
+  updateStatus(id: number, status: string) {
     return this.http.patch<Word>(URLSw + '/update/' + id, status);
   }
 
-  delete(id: String) {
+  delete(id: number) {
     return this.http.delete<Word>(URLS + '/' + id);
   }
 
@@ -85,7 +91,7 @@ export class WordService {
     return this.http.request(req);
   }
 
-  findUnstudiedWord(lang: string) {
-    return this.http.get<Word>(URLSw + '/learn' + '/EN');
+  findUnstudiedWord(language: string) {
+    return this.http.get<Word>(URLSw + '/learn/' + language);
   }
 }
