@@ -1,4 +1,4 @@
-package by.waitaty.wordservice.dto;
+package by.waitaty.wordservice.dto.response;
 
 import by.waitaty.wordservice.model.Transcription;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-public class WordWithTranslationsDto {
+public class WordWithTranslationsDtoResponse {
     private Long id;
     private String text;
     private String language;

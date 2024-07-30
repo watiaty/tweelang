@@ -1,13 +1,25 @@
 package by.waitaty.wordservice.service;
 
+import by.waitaty.wordservice.model.Language;
 import by.waitaty.wordservice.model.Word;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface WordService {
-    Optional<Word> findWordByNameAndLanguage(String name, String language);
+    Word getById(Long id);
 
-    Word findWordById(Long id);
+    void delete(Long id);
 
-    Word findOrCreateWord(String name, String language);
+    List<Word> searchWords(String searchText);
+
+    Word getOrCreateWord(String name, Language language);
+
+    Optional<Word> getWordByNameAndLanguage(String name, String languageCode);
+
+    List<Word> getAllByRatingAndLanguage(String languageCode);
+
+    Word getWordExceptListByLanguage(List<Long> ids, String language);
+
+    void increaseWeight(Long id);
 }

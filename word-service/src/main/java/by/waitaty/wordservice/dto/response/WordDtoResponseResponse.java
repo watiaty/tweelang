@@ -1,4 +1,4 @@
-package by.waitaty.wordservice.dto;
+package by.waitaty.wordservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class WordDtoResponse {
+public class WordDtoResponseResponse {
     private Long id;
     private String word;
     private String transcription;

@@ -1,4 +1,4 @@
-package by.waitaty.wordservice.dto;
+package by.waitaty.wordservice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

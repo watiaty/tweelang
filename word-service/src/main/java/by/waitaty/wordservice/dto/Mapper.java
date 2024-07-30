@@ -1,5 +1,7 @@
 package by.waitaty.wordservice.dto;
 
+import by.waitaty.wordservice.dto.response.ShortWordDtoResponse;
+import by.waitaty.wordservice.dto.response.WordDtoResponseResponse;
 import by.waitaty.wordservice.model.Translation;
 import by.waitaty.wordservice.model.Word;
 import by.waitaty.wordservice.model.WordUsage;
@@ -9,8 +11,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class Mapper {
-    public WordDtoResponse wordUsageToWordDtoResponse(WordUsage wordUsage) {
-        return WordDtoResponse.builder()
+    public WordDtoResponseResponse wordUsageToWordDtoResponse(WordUsage wordUsage) {
+        return WordDtoResponseResponse.builder()
                 .id(wordUsage.getId())
                 .word(wordUsage.getWord().getText())
                 .definition(wordUsage.getDefinition())

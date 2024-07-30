@@ -1,18 +1,19 @@
 package by.waitaty.wordservice.controller;
 
-import by.waitaty.wordservice.dto.GetUserWordsRequest;
+import by.waitaty.wordservice.dto.request.GetUserWordsRequest;
 import by.waitaty.wordservice.dto.Mapper;
-import by.waitaty.wordservice.dto.ShortWordDtoResponse;
-import by.waitaty.wordservice.dto.WordDtoResponse;
-import by.waitaty.wordservice.dto.WordUsageDtoResponse;
-import by.waitaty.wordservice.dto.WordWithTranslationsDto;
+import by.waitaty.wordservice.dto.response.ShortWordDtoResponse;
+import by.waitaty.wordservice.dto.response.WordDtoResponseResponse;
+import by.waitaty.wordservice.dto.response.WordUsageDtoResponse;
+import by.waitaty.wordservice.dto.response.WordWithTranslationsDtoResponse;
 import by.waitaty.wordservice.exception.UnsupportedFileException;
 import by.waitaty.wordservice.exception.WordNotFoundException;
 import by.waitaty.wordservice.model.Translation;
 import by.waitaty.wordservice.model.Word;
 import by.waitaty.wordservice.model.WordUsage;
-import by.waitaty.wordservice.service.WordServiceImpl;
-import by.waitaty.wordservice.service.WordUsageServiceImpl;
+import by.waitaty.wordservice.service.impl.LanguageServiceImpl;
+import by.waitaty.wordservice.service.impl.WordServiceImpl;
+import by.waitaty.wordservice.service.impl.WordUsageServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,53 +37,45 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class WordController {
     private final WordServiceImpl wordService;
+    private final LanguageServiceImpl languageService;
     private final WordUsageServiceImpl wordUsageService;
 
     private Mapper mapper;
 
     @GetMapping("/findById")
     public Word findById(@RequestParam("id") Long id) {
-        return wordService.findWordById(id);
-    }
-
-    @GetMapping(path = "/all")
-    public List<WordDtoResponse> getAll() {
-        return null;
-//                wordService.findAll().stream()
-//                .map(mapper::wordToWordDtoResponse)
-//                .toList();
+        return wordService.getById(id);
     }
 
     @GetMapping(path = "/rating/{languageCode}")
     public List<ShortWordDtoResponse> getAllByRating(@PathVariable String languageCode) {
-        return wordService.findAllByRatingAndLanguage(languageCode)
+        return wordService.getAllByRatingAndLanguage(languageCode)
                 .stream()
                 .map(mapper::wordToShortWordDtoResponse)
                 .toList();
     }
 
     @GetMapping(path = "/list")
-    public List<WordDtoResponse> getByIds(@RequestBody GetUserWordsRequest request) {
-        System.out.println(request.getIds());
-        return wordUsageService.findListByIdsAndLanguage(request.getIds(), request.getLanguage())
+    public List<WordDtoResponseResponse> getByIds(@RequestBody GetUserWordsRequest request) {
+        return wordUsageService.getListByIdsAndLanguage(request.getIds(), request.getLanguage())
                 .stream()
                 .map(mapper::wordUsageToWordDtoResponse)
                 .toList();
     }
 
     @GetMapping(path = "/exclude")
-    public WordDtoResponse findWordExcludingIdsByLanguage(@RequestBody GetUserWordsRequest request) {
-        Word word = wordService.findWordExceptListByLanguage(request.getIds(), request.getLanguage());
-        return WordDtoResponse.builder()
+    public WordDtoResponseResponse findWordExcludingIdsByLanguage(@RequestBody GetUserWordsRequest request) {
+        var word = wordService.getWordExceptListByLanguage(request.getIds(), request.getLanguage());
+        return WordDtoResponseResponse.builder()
                 .word(word.getText())
-//                .id(word.getId())
+                .id(word.getId())
 //                .translations(translationService.findAllById(word.getId()))
                 .build();
     }
 
     @GetMapping("/search")
     public List<ShortWordDtoResponse> search(@RequestParam("q") String searchText) {
-        List<Word> words = wordService.searchWords(searchText);
+        var words = wordService.searchWords(searchText);
         return words.stream()
                 .map(word -> ShortWordDtoResponse.builder()
                         .id(word.getId())
@@ -94,20 +87,21 @@ public class WordController {
     }
 
     @GetMapping("/find")
-    public Word findOrCreate(@RequestParam("word") String name, @RequestParam("lang") String lang) {
-        return wordService.findOrCreateWord(name, lang);
+    public Word findOrCreate(@RequestParam("word") String name, @RequestParam("lang") String languageCode) {
+        var language = languageService.getByCode(languageCode);
+        return wordService.getOrCreateWord(name, language);
     }
 
     @GetMapping("/{language}/{stringWord}")
-    public WordWithTranslationsDto findByWordAndLang(@PathVariable String language, @PathVariable String stringWord) {
-        Word word = wordService.findWordByNameAndLanguage(stringWord, language)
+    public WordWithTranslationsDtoResponse findByWordAndLang(@PathVariable String language, @PathVariable String stringWord) {
+        var word = wordService.getWordByNameAndLanguage(stringWord, language)
                 .orElseThrow(() -> new WordNotFoundException(stringWord, language));
 
-        List<WordUsageDtoResponse> wordUsageDtoResponses = word.getUsages().stream()
+        var wordUsageDtoResponses = word.getUsages().stream()
                 .map(this::convertToWordUsageDtoResponse)
                 .collect(Collectors.toList());
 
-        return WordWithTranslationsDto.builder()
+        return WordWithTranslationsDtoResponse.builder()
                 .id(word.getId())
                 .text(word.getText())
                 .language(word.getLanguage().getCode())
@@ -145,10 +139,10 @@ public class WordController {
                     .map(line -> line.replaceAll("[\\p{Punct}&&[^']]", "").toLowerCase())
                     .collect(Collectors.joining(" "));
 
-            String[] words = content.split("\\s+");
+            var words = content.split("\\s+");
             for (var word : words) {
-                var id = 1L;
-//                var id = wordService.findOrCreateWord(word, "EN").getId();
+                var language = languageService.getByCode("en");
+                var id = wordService.getOrCreateWord(word, language).getId();
                 wordService.increaseWeight(id);
             }
         } catch (IOException e) {
@@ -157,7 +151,7 @@ public class WordController {
     }
 
     private WordUsageDtoResponse convertToWordUsageDtoResponse(WordUsage wordUsage) {
-        List<String> translations = wordUsage.getTranslations().stream()
+        var translations = wordUsage.getTranslations().stream()
                 .filter(translation -> Objects.equals(translation.getLanguage().getCode(), "ru"))
                 .map(Translation::getTranslation)
                 .collect(Collectors.toList());

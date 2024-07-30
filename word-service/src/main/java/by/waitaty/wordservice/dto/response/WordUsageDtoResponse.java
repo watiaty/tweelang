@@ -1,4 +1,4 @@
-package by.waitaty.wordservice.dto;
+package by.waitaty.wordservice.dto.response;
 
 import by.waitaty.wordservice.model.PartOfSpeech;
 import by.waitaty.wordservice.model.ProficiencyLevel;

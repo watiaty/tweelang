@@ -1,8 +1,8 @@
 package by.waitaty.wordservice.controller;
 
-import by.waitaty.wordservice.dto.AddTranslationRequest;
-import by.waitaty.wordservice.service.TranslationServiceImpl;
-import by.waitaty.wordservice.service.WordServiceImpl;
+import by.waitaty.wordservice.dto.request.AddTranslationRequest;
+import by.waitaty.wordservice.service.impl.TranslationServiceImpl;
+import by.waitaty.wordservice.service.impl.WordServiceImpl;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +30,7 @@ public class TranslationController {
     @Transactional
     @PostMapping("/add")
     public void addTranslation(@RequestBody AddTranslationRequest request) {
-        var word = wordService.findById(request.getId());
+        var word = wordService.getById(request.getId());
 
         for (String translation : request.getTranslations()) {
             translationService.addWordTranslation(word, translation, request.getLanguage());
