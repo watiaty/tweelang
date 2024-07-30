@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserWordRepository extends JpaRepository<UserWord, Long> {
+    void deleteByIdWordAndIdUser(Long id, Long userId);
+
     List<UserWord> findAllByIdUserOrderByIdAsc(Long userId);
 
     @Query("""
@@ -26,8 +28,6 @@ public interface UserWordRepository extends JpaRepository<UserWord, Long> {
     List<UserWord> findAllByIdUserOrderByRepeatStageDescRepeatDateAsc(Long userId, Pageable pageable);
 
     Optional<UserWord> findByIdWordAndIdUser(Long word, Long userId);
-
-    void deleteByIdWordAndIdUser(Long id, Long userId);
 
     boolean existsByIdUserAndIdWord(Long idUser, Long idWord);
 }

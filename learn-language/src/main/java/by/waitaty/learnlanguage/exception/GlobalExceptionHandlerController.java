@@ -1,12 +1,13 @@
 package by.waitaty.learnlanguage.exception;
 
-import by.waitaty.learnlanguage.dto.ErrorResponseDto;
+import by.waitaty.learnlanguage.dto.response.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice
@@ -62,13 +63,13 @@ public class GlobalExceptionHandlerController {
         return errorResponseDto;
     }
 
-//    @ExceptionHandler({})
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    public ErrorResponseDto handleConflictException(RuntimeException ex) {
-//        log.info(ex.getMessage(), ex);
-//        ErrorResponseDto errorResponseDto = new ErrorResponseDto();
-//        errorResponseDto.setStatus("409");
-//        errorResponseDto.setError(ex.getMessage());
-//        return errorResponseDto;
-//    }
+    @ExceptionHandler({ResponseStatusException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponseDto handleConflictException(RuntimeException ex) {
+        log.info(ex.getMessage(), ex);
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto();
+        errorResponseDto.setStatus("409");
+        errorResponseDto.setError(ex.getMessage());
+        return errorResponseDto;
+    }
 }

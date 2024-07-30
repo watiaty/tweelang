@@ -16,33 +16,29 @@ import java.util.Optional;
 public class UserWordServiceImpl implements UserWordService {
     private final UserWordRepository userWordRepository;
 
+    public void update(UserWord userWord) {
+        userWordRepository.save(userWord);
+    }
+
+    public void deleteByIdAndUserId(Long id, Long userId) {
+        userWordRepository.deleteByIdWordAndIdUser(id, userId);
+    }
+
     public List<UserWord> getAllByUserId(Long userId) {
         return userWordRepository.findAllByIdUserOrderByIdAsc(userId);
     }
 
-    public List<UserWord> getCountLearningWords(int count, Long userId) {
-        if (count == 0) count = Integer.MAX_VALUE;
-        Pageable pageable = PageRequest.of(0, count);
+    public List<UserWord> getQuantityLearningWordsByUserId(int quantity, Long userId) {
+        if (quantity == 0) quantity = Integer.MAX_VALUE;
+        Pageable pageable = PageRequest.of(0, quantity);
         return userWordRepository.findAllByIdUserOrderByRepeatStageDescRepeatDateAsc(userId, pageable);
     }
 
-    public Optional<UserWord> getUserWordByWord(Long id, Long userId) {
-        return userWordRepository.findByIdWordAndIdUser(id, userId);
-    }
-
-    public UserWord update(UserWord userWord) {
-        return userWordRepository.save(userWord);
-    }
-
-    public void delete(Long id, Long userId) {
-        userWordRepository.deleteByIdWordAndIdUser(id, userId);
-    }
-
-    public Optional<UserWord> findByIdWordAndIdUser(Long wordId, Long userId) {
+    public Optional<UserWord> getByWordIdAndUserId(Long wordId, Long userId) {
         return userWordRepository.findByIdWordAndIdUser(wordId, userId);
     }
 
-    public boolean existsByIdUserAndIdWord(Long userId, Long wordId) {
+    public boolean existsByUserIdAndWordId(Long userId, Long wordId) {
         return userWordRepository.existsByIdUserAndIdWord(userId, wordId);
     }
 }

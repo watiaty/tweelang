@@ -2,23 +2,17 @@ package by.waitaty.learnlanguage.controller;
 
 import by.waitaty.learnlanguage.client.WordClient;
 import by.waitaty.learnlanguage.config.WebClientConfig;
-import by.waitaty.learnlanguage.dto.Mapper;
-import by.waitaty.learnlanguage.dto.WordDtoResponse;
-import by.waitaty.learnlanguage.dto.request.AddNewTranslationRequest;
 import by.waitaty.learnlanguage.dto.request.AddUserWordDtoRequest;
-import by.waitaty.learnlanguage.dto.request.AddWordRequest;
 import by.waitaty.learnlanguage.dto.request.GetUserWordsRequest;
-import by.waitaty.learnlanguage.dto.request.WordTrainDtoRequest;
-import by.waitaty.learnlanguage.dto.response.UserWordDtoResponse;
+import by.waitaty.learnlanguage.dto.request.WordPracticeDtoRequest;
+import by.waitaty.learnlanguage.dto.response.WordDtoResponse;
 import by.waitaty.learnlanguage.entity.Language;
 import by.waitaty.learnlanguage.entity.UserWord;
-import by.waitaty.learnlanguage.entity.Word;
 import by.waitaty.learnlanguage.service.impl.UserWordServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
@@ -34,9 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +38,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class WordController {
     private final UserWordServiceImpl userWordService;
-    private Mapper mapper;
     private WebClientConfig webClient;
 
     @GetMapping(path = "/{language}")
@@ -94,11 +84,11 @@ public class WordController {
     @SecurityRequirement(name = "JWT")
     @ResponseBody
     public List<WordDtoResponse> getWordsForTraining(
-            @RequestBody WordTrainDtoRequest wordTrainDtoRequest,
+            @RequestBody WordPracticeDtoRequest wordPracticeDtoRequest,
             @AuthenticationPrincipal Jwt jwt,
             @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
         Long userId = jwt.getClaim("userId");
-        List<Long> wordIds = getLearningWordIds(wordTrainDtoRequest.getQuantity(), userId);
+        List<Long> wordIds = getLearningWordIds(wordPracticeDtoRequest.getQuantity(), userId);
         List<WordDtoResponse> wordDtoResponses = fetchWordsFromService(wordIds, authorizedClient);
 
         Collections.shuffle(wordDtoResponses);
@@ -106,39 +96,10 @@ public class WordController {
         return wordDtoResponses;
     }
 
-    /**
-     * Retrieves a list of word IDs for learning.
-     *
-     * @param quantity the number of words to retrieve
-     * @param userId   the ID of the user
-     * @return a list of word IDs
-     */
-    private List<Long> getLearningWordIds(int quantity, Long userId) {
-        return userWordService.getCountLearningWords(quantity, userId)
-                .stream()
-                .map(UserWord::getIdWord)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Fetches words from an external service.
-     *
-     * @param wordIds          the list of word IDs
-     * @param authorizedClient the authorized client for interacting with the service
-     * @return a list of user word DTO responses
-     */
-    private List<WordDtoResponse> fetchWordsFromService(List<Long> wordIds, OAuth2AuthorizedClient authorizedClient) {
-        WordClient wordClient = webClient.wordClient(authorizedClient);
-        return wordClient.getByIds(GetUserWordsRequest.builder()
-                .ids(wordIds)
-                .language("en")
-                .build());
-    }
-
     @PatchMapping("/update/{id}")
     public void setLearnedStatusWord(@PathVariable Long id, @RequestBody String status, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
-        userWordService.findByIdWordAndIdUser(id, userId).ifPresent(userWord -> {
+        userWordService.getByWordIdAndUserId(id, userId).ifPresent(userWord -> {
             userWord.setRepeatDate(LocalDate.now());
             if (status.equals("learned")) {
                 if (userWord.getRepeatStage() < 5) {
@@ -158,22 +119,7 @@ public class WordController {
     @SecurityRequirement(name = "JWT")
     public void deleteUserWord(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
-        userWordService.delete(id, userId);
-    }
-
-    @PostMapping("/add")
-    @SecurityRequirement(name = "JWT")
-    @Transactional
-    public ResponseEntity<UserWordDtoResponse> addWord(
-            @RequestBody AddWordRequest addWordRequest,
-            @AuthenticationPrincipal Jwt jwt,
-            @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
-        Long userId = jwt.getClaim("userId");
-        WordClient wordClient = webClient.wordClient(authorizedClient);
-        Word word = wordClient.findOrCreate(addWordRequest.getWord(), Language.getLanguageFromString(addWordRequest.getLanguage()).name());
-        UserWord userWord = createUserWord(userId, word, addWordRequest.getTranslations(), wordClient);
-        UserWord savedUserWord = userWordService.update(userWord);
-        return ResponseEntity.ok(mapper.userWordToWordDtoResponse(savedUserWord));
+        userWordService.deleteByIdAndUserId(id, userId);
     }
 
     @PostMapping("/add-new-word")
@@ -185,7 +131,7 @@ public class WordController {
         Long userId = jwt.getClaim("userId");
         Long wordId = addWordRequest.getId();
 
-        if (userWordService.existsByIdUserAndIdWord(userId, wordId)) {
+        if (userWordService.existsByUserIdAndWordId(userId, wordId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Word already added");
         }
 
@@ -197,56 +143,32 @@ public class WordController {
                 .build());
     }
 
-    @PostMapping("/csv")
-    @SecurityRequirement(name = "JWT")
-    @Transactional
-    public void addWordsFromCsv(
-            @AuthenticationPrincipal Jwt jwt,
-            @RegisteredOAuth2AuthorizedClient("messaging-client-token-exchange") OAuth2AuthorizedClient authorizedClient) {
-        Long userId = jwt.getClaim("userId");
+    /**
+     * Retrieves a list of word IDs for learning.
+     *
+     * @param quantity the number of words to retrieve
+     * @param userId   the ID of the user
+     * @return a list of word IDs
+     */
+    private List<Long> getLearningWordIds(int quantity, Long userId) {
+        return userWordService.getQuantityLearningWordsByUserId(quantity, userId)
+                .stream()
+                .map(UserWord::getIdWord)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Fetches words from an external service.
+     *
+     * @param wordIds          the list of word IDs
+     * @param authorizedClient the authorized client for interacting with the service
+     * @return a list of user word DTO responses
+     */
+    private List<WordDtoResponse> fetchWordsFromService(List<Long> wordIds, OAuth2AuthorizedClient authorizedClient) {
         WordClient wordClient = webClient.wordClient(authorizedClient);
-        String csvFile = "D:\\Java\\Projects\\tweelang\\learn-language\\src\\main\\resources\\words.csv";
-        String line;
-        String cvsSplitBy = ",";
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            while ((line = br.readLine()) != null) {
-                // use comma as separator
-                String[] data = line.split(cvsSplitBy);
-                String englishWord = data[0].trim();
-                String russianTranslation = data[1].trim();
-
-                // Call method to insert data into database
-                Word word = wordClient.findOrCreate(englishWord, "EN");
-                String[] translations = new String[1];
-                translations[0] = russianTranslation;
-                UserWord userWord = createUserWord(userId, word, translations, wordClient);
-                UserWord savedUserWord = userWordService.update(userWord);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean wordExistsForUser(Long userId, Long wordId) {
-        return userWordService.existsByIdUserAndIdWord(userId, wordId);
-    }
-
-    private UserWord createUserWord(Long userId, Word word, String[] translations, WordClient wordClient) {
-        UserWord userWord = userWordService.getUserWordByWord(word.getId(), userId)
-                .orElseGet(() -> UserWord.builder()
-                        .idUser(userId)
-                        .idWord(word.getId())
-                        .repeatStage(1)
-                        .repeatDate(LocalDate.now())
-                        .build());
-
-        wordClient.addTranslation(AddNewTranslationRequest.builder()
-                .id(word.getId())
-                .language(Language.RU.name())
-                .translations(translations)
-                .build()
-        );
-
-        return userWord;
+        return wordClient.getByIds(GetUserWordsRequest.builder()
+                .ids(wordIds)
+                .language("en")
+                .build());
     }
 }

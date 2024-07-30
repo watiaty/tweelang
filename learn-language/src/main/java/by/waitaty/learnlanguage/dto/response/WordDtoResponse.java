@@ -1,4 +1,4 @@
-package by.waitaty.learnlanguage.dto;
+package by.waitaty.learnlanguage.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
