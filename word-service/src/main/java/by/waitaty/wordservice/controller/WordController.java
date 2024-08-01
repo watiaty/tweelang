@@ -55,7 +55,7 @@ public class WordController {
                 .toList();
     }
 
-    @GetMapping(path = "/list")
+    @PostMapping(path = "/list")
     public List<WordDtoResponseResponse> getByIds(@RequestBody GetUserWordsRequest request) {
         return wordUsageService.getListByIdsAndLanguage(request.getIds(), request.getLanguage())
                 .stream()
