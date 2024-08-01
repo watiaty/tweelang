@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserWordService {
-    void update(UserWord userWord);
+    void save(UserWord userWord);
 
     void deleteByIdAndUserId(Long id, Long userId);
 

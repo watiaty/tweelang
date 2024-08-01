@@ -1,18 +1,21 @@
 package by.waitaty.learnlanguage.client;
 
+import by.waitaty.learnlanguage.config.FeignClientConfiguration;
 import by.waitaty.learnlanguage.dto.request.GetUserWordsRequest;
 import by.waitaty.learnlanguage.dto.response.WordDtoResponse;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.service.annotation.GetExchange;
-import org.springframework.web.service.annotation.HttpExchange;
 
 import java.util.List;
 
-@HttpExchange
+@FeignClient(value = "word-service", configuration = FeignClientConfiguration.class)
 public interface WordClient {
-    @GetExchange("/api/v1/word/list")
+
+    @PostMapping(value = "/api/v1/word/list")
     List<WordDtoResponse> getByIds(@RequestBody GetUserWordsRequest getUserWordsRequest);
 
-    @GetExchange("/api/v1/word/exclude")
+    @GetMapping(value = "/api/v1/word/exclude")
     WordDtoResponse findWordExcludingIdsByLanguage(@RequestBody GetUserWordsRequest request);
 }

@@ -16,7 +16,7 @@ import java.util.Optional;
 public class UserWordServiceImpl implements UserWordService {
     private final UserWordRepository userWordRepository;
 
-    public void update(UserWord userWord) {
+    public void save(UserWord userWord) {
         userWordRepository.save(userWord);
     }
 

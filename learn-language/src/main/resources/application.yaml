@@ -67,6 +67,7 @@ spring:
             provider: "spring"
             authorization-grant-type: client_credentials
             client-name: messaging-client-client-credentials
+            scope: openid, profile
         provider:
           spring:
             issuer-uri: ${ISSUER_URI}
