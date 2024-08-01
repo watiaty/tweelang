@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-user-count-to-word-usage
+      author: Yauheni Haikou
+      changes:
+        - addColumn:
+            tableName: word_usage
+            columns:
+              - column:
+                  name: user_count
+                  type: int
+                  constraints:
+                    defaultValue: 0

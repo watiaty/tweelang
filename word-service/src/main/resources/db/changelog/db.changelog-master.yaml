@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changeset/init.yaml
+  - include:
+      file: db/changelog/changeset/add-user-count-to-word-usage.yaml

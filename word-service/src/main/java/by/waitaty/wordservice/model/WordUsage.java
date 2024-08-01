@@ -52,4 +52,7 @@ public class WordUsage {
 
     @Column(name = "definition", nullable = false)
     private String definition;
+
+    @Column(name = "user_count")
+    private int userCount;
 }
