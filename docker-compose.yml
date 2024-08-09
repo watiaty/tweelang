@@ -133,6 +133,21 @@ services:
     ports:
       - "8081:8081"
 
+  zookeeper:
+    image: 'zookeeper:latest'
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+
+  kafka:
+    image: 'apache/kafka:3.8.0'
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+
 volumes:
   words_data:
     name: words

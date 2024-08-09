@@ -1,6 +1,7 @@
 package by.waitaty.learnlanguage.controller;
 
 import by.waitaty.learnlanguage.client.WordClient;
+import by.waitaty.learnlanguage.config.KafkaProducerConfig;
 import by.waitaty.learnlanguage.dto.request.AddUserWordDtoRequest;
 import by.waitaty.learnlanguage.dto.request.GetUserWordsRequest;
 import by.waitaty.learnlanguage.dto.request.WordPracticeDtoRequest;
@@ -8,10 +9,10 @@ import by.waitaty.learnlanguage.dto.response.WordDtoResponse;
 import by.waitaty.learnlanguage.entity.Language;
 import by.waitaty.learnlanguage.entity.UserWord;
 import by.waitaty.learnlanguage.service.impl.UserWordServiceImpl;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,9 +37,9 @@ import java.util.stream.Collectors;
 public class WordController {
     private final UserWordServiceImpl userWordService;
     private final WordClient wordClient;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @GetMapping(path = "/{language}")
-    @SecurityRequirement(name = "JWT")
     @ResponseBody
     public List<WordDtoResponse> getAll(@PathVariable String language, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
@@ -52,7 +53,6 @@ public class WordController {
     }
 
     @GetMapping(path = "/learn/{lang}")
-    @SecurityRequirement(name = "JWT")
     @ResponseBody
     public WordDtoResponse getUnstudiedWord(@PathVariable Language lang, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
@@ -66,7 +66,6 @@ public class WordController {
     }
 
     @PostMapping(path = "/practice")
-    @SecurityRequirement(name = "JWT")
     @ResponseBody
     public List<WordDtoResponse> getWordsForTraining(@RequestBody WordPracticeDtoRequest wordPracticeDtoRequest,
                                                      @AuthenticationPrincipal Jwt jwt) {
@@ -99,14 +98,12 @@ public class WordController {
 
     @Transactional
     @DeleteMapping("/delete/{id}")
-    @SecurityRequirement(name = "JWT")
     public void deleteUserWord(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("userId");
         userWordService.deleteByIdAndUserId(id, userId);
     }
 
     @PostMapping("/add-new-word")
-    @SecurityRequirement(name = "JWT")
     @Transactional
     public void addWordByIdAndStatus(
             @RequestBody AddUserWordDtoRequest addWordRequest,
@@ -124,6 +121,8 @@ public class WordController {
                 .repeatStage(1)
                 .status(addWordRequest.getStatus())
                 .build());
+
+//        kafkaTemplate.send("topic", wordId.toString());
     }
 
     /**
@@ -143,7 +142,7 @@ public class WordController {
     /**
      * Fetches words from an external service.
      *
-     * @param wordIds          the list of word IDs
+     * @param wordIds the list of word IDs
      * @return a list of user word DTO responses
      */
     private List<WordDtoResponse> fetchWordsFromService(List<Long> wordIds) {
